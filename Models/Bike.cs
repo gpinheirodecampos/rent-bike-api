@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace RentBikeApi.Models
 {
@@ -12,7 +13,7 @@ namespace RentBikeApi.Models
 
         public TypeBike TypeBike { get; set; }
 
-        public ICollection<Image> Images { get; } = new List<Image>();
+        public ICollection<Image> Images { get; } = new Collection<Image>();
 
     }
 
