@@ -10,13 +10,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
-
 // Adicionando string de conexao
-var mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // Registranco o servico do DbContext
-builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection)));
+builder.Services.AddDbContext<AppDbContext>(options =>
+                    options.UseMySql(mySqlConnection,
+                    ServerVersion.AutoDetect(mySqlConnection)));
+
+var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

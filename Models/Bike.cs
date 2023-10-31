@@ -5,6 +5,11 @@ namespace RentBikeApi.Models
 {
     public class Bike
     {
+        public Bike() 
+        {
+            Images = new Collection<Image>();
+        }
+
         public int BikeId { get; set; }
 
         public string? Name { get; set; }
@@ -13,7 +18,7 @@ namespace RentBikeApi.Models
 
         public TypeBike TypeBike { get; set; }
 
-        public ICollection<Image> Images { get; } = new Collection<Image>();
+        public ICollection<Image> Images { get; }
 
     }
 
