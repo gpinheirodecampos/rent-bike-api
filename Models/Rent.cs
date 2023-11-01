@@ -1,7 +1,12 @@
-﻿namespace RentBikeApi.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace RentBikeApi.Models
 {
+    [Table("Rent")]
     public class Rent
     {
+        [Key]
         public int RentId { get; set; }
 
         public DateTime? DateEnd { get; set; }

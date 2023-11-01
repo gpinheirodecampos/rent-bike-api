@@ -1,8 +1,11 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RentBikeApi.Models
 {
+    [Table("Bike")]
     public class Bike
     {
         public Bike() 
@@ -10,10 +13,15 @@ namespace RentBikeApi.Models
             Images = new Collection<Image>();
         }
 
+        [Key]
         public int BikeId { get; set; }
 
+        [Required]
+        [StringLength(80)]
         public string? Name { get; set; }
 
+        [Required]
+        [StringLength(300)]
         public string? Description { get; set; }
 
         public TypeBike TypeBike { get; set; }
