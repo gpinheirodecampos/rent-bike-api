@@ -11,8 +11,8 @@ using RentAPI.Context;
 namespace RentAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231031224301_PopulaRent")]
-    partial class PopulaRent
+    [Migration("20231102211517_Ajuste")]
+    partial class Ajuste
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

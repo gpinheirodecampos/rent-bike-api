@@ -19,7 +19,7 @@ namespace RentAPI.Migrations
                 .HasAnnotation("ProductVersion", "6.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("RentBikeApi.Models.Bike", b =>
+            modelBuilder.Entity("RentAPI.Models.Bike", b =>
                 {
                     b.Property<int>("BikeId")
                         .ValueGeneratedOnAdd()
@@ -43,7 +43,7 @@ namespace RentAPI.Migrations
                     b.ToTable("Bike");
                 });
 
-            modelBuilder.Entity("RentBikeApi.Models.Image", b =>
+            modelBuilder.Entity("RentAPI.Models.Image", b =>
                 {
                     b.Property<int>("ImageId")
                         .ValueGeneratedOnAdd()
@@ -64,7 +64,7 @@ namespace RentAPI.Migrations
                     b.ToTable("Image");
                 });
 
-            modelBuilder.Entity("RentBikeApi.Models.Rent", b =>
+            modelBuilder.Entity("RentAPI.Models.Rent", b =>
                 {
                     b.Property<int>("RentId")
                         .ValueGeneratedOnAdd()
@@ -91,7 +91,7 @@ namespace RentAPI.Migrations
                     b.ToTable("Rent");
                 });
 
-            modelBuilder.Entity("RentBikeApi.Models.User", b =>
+            modelBuilder.Entity("RentAPI.Models.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -120,24 +120,24 @@ namespace RentAPI.Migrations
                     b.ToTable("User");
                 });
 
-            modelBuilder.Entity("RentBikeApi.Models.Image", b =>
+            modelBuilder.Entity("RentAPI.Models.Image", b =>
                 {
-                    b.HasOne("RentBikeApi.Models.Bike", "Bike")
+                    b.HasOne("RentAPI.Models.Bike", "Bike")
                         .WithMany("Images")
                         .HasForeignKey("BikeId");
 
                     b.Navigation("Bike");
                 });
 
-            modelBuilder.Entity("RentBikeApi.Models.Rent", b =>
+            modelBuilder.Entity("RentAPI.Models.Rent", b =>
                 {
-                    b.HasOne("RentBikeApi.Models.Bike", "Bike")
+                    b.HasOne("RentAPI.Models.Bike", "Bike")
                         .WithMany()
                         .HasForeignKey("BikeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RentBikeApi.Models.User", "User")
+                    b.HasOne("RentAPI.Models.User", "User")
                         .WithMany("Rent")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -148,12 +148,12 @@ namespace RentAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("RentBikeApi.Models.Bike", b =>
+            modelBuilder.Entity("RentAPI.Models.Bike", b =>
                 {
                     b.Navigation("Images");
                 });
 
-            modelBuilder.Entity("RentBikeApi.Models.User", b =>
+            modelBuilder.Entity("RentAPI.Models.User", b =>
                 {
                     b.Navigation("Rent");
                 });
