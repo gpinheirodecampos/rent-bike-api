@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RentBikeApi.Models;
+using RentAPI.Models;
 
 namespace RentAPI.Context
 {
