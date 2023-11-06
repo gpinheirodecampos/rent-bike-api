@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
-namespace RentBikeApi.Models
+namespace RentAPI.Models
 {
     [Table("Rent")]
     public class Rent
@@ -13,10 +14,12 @@ namespace RentBikeApi.Models
 
         public DateTime? DateStart { get; set; }
 
+        [JsonIgnore]
         public Bike Bike { get; set; } = null!;
 
         public int BikeId { get; set; }
 
+        [JsonIgnore]
         public User User { get; set; } = null!;
 
         public int UserId { get; set; }
