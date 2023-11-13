@@ -1,7 +1,10 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using RentAPI.Context;
+using RentAPI.DTOs.Mappings;
 using RentAPI.Extensions;
 using RentAPI.Filters;
+using RentAPI.Repository;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +28,16 @@ string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConne
 builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseMySql(mySqlConnection,
                     ServerVersion.AutoDetect(mySqlConnection)));
+
+builder.Services.AddScoped<IUnityOfWork, UnitOfWork>();
+
+var mappingConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
+
+IMapper mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 

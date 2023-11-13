@@ -26,6 +26,8 @@ namespace RentAPI.Models
         [StringLength(300, ErrorMessage = "A descricao deve conter no maximo {1} e no minimo {2} caracteres.", MinimumLength = 5)]
         public string? Description { get; set; }
 
+        public bool Available { get; set; }
+
         [Required(ErrorMessage = "Informe o tipo da bike: 1 para NOVA, 2 para USADA")]
         [Range(1, 2, ErrorMessage = "Informe 1 para NOVA, 2 para USADA")]
         public TypeBike TypeBike { get; set; }
