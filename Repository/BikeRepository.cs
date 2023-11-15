@@ -10,14 +10,14 @@ namespace RentAPI.Repository
         { 
         }
 
-        public async IEnumerable<Bike> GetBikeByAvailability()
+        public IEnumerable<Bike> GetBikeByAvailability()
         {
-            return Get().Where(b => b.Available == true).ToList();
+            return Get().Where(b => b.Available).ToList();
         }
 
-        public void UpdateBikeAvailability(int id)
+        public async Task UpdateBikeAvailability(int id)
         {
-            var bike = GetById(b => b.BikeId == id);
+            var bike = await GetByIdAsync(b => b.BikeId == id);
 
             
 
@@ -27,5 +27,6 @@ namespace RentAPI.Repository
             _context.Entry(bike).Property(b => b.Available).IsModified = true;
             _context.SaveChanges();
         }
+
     }
 }

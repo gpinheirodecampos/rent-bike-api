@@ -7,6 +7,6 @@ namespace RentAPI.Repository
     {
         IEnumerable<Bike> GetBikeByAvailability();
 
-        void UpdateBikeAvailability(int id);
+        Task UpdateBikeAvailability(int id);
     }
 }

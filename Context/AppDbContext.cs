@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RentAPI.Models;
 
 namespace RentAPI.Context
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) 
         { }
@@ -14,6 +15,6 @@ namespace RentAPI.Context
 
         public DbSet<Rent>? Rents { get; set; }
 
-        public DbSet<User>? Users { get; set; }
+        public new DbSet<User>? Users { get; set; }
     }
 }

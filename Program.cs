@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RentAPI.Context;
 using RentAPI.DTOs.Mappings;
@@ -24,11 +25,17 @@ builder.Services.AddScoped<ApiLoggingFilter>();
 // Adicionando string de conexao
 string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Registranco o servico do DbContext
+// Registrando servico DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
                     options.UseMySql(mySqlConnection,
                     ServerVersion.AutoDetect(mySqlConnection)));
 
+// Registrando servico Identity
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
+// Registrando servico Unity Of Work
 builder.Services.AddScoped<IUnityOfWork, UnitOfWork>();
 
 var mappingConfig = new MapperConfiguration(mc =>
@@ -52,7 +59,8 @@ if (app.Environment.IsDevelopment())
 app.ConfigureExceptionHandler();
 
 app.UseHttpsRedirection();
-
+app.UseRouting();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

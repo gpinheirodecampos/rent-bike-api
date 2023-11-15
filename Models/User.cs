@@ -28,6 +28,8 @@ namespace RentAPI.Models
         [CaractereEspecial]
         public string? Password { get; set; }
 
+        public string? ConfirmPassword { get; set; }
+
         [JsonIgnore]
         public ICollection<Rent>? Rent { get; set; }
     }
