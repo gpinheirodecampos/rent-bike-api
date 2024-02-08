@@ -1,8 +1,8 @@
-﻿using ApiCatalogo.DTOs;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using RentAPI.DTOs;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -15,10 +15,7 @@ namespace RentAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AutorizaController : ControllerBase
-    {
-        [Route("api/[Controller]")]
-        [ApiController]
+    
         public class AutorizaController : ControllerBase
         {
             private readonly UserManager<IdentityUser> _userManager;
@@ -41,7 +38,7 @@ namespace RentAPI.Controllers
             }
 
             [HttpPost("register")]
-            public async Task<ActionResult> RegisterUser([FromBody] UsuarioDTO model)
+            public async Task<ActionResult> RegisterUser([FromBody] UsuarioLoginDTO model)
             {
                 //if (!ModelState.IsValid)
                 //{
@@ -67,7 +64,7 @@ namespace RentAPI.Controllers
             }
 
             [HttpPost("login")]
-            public async Task<ActionResult> Login([FromBody] UsuarioDTO userInfo)
+            public async Task<ActionResult> Login([FromBody] UsuarioLoginDTO userInfo)
             {
                 //verifica se o modelo é válido
                 if (!ModelState.IsValid)
@@ -90,7 +87,7 @@ namespace RentAPI.Controllers
                 }
             }
 
-            private UsuarioToken GeraToken(UsuarioDTO userInfo)
+            private UsuarioToken GeraToken(UsuarioLoginDTO userInfo)
             {
                 //define declarações do usuário
                 var claims = new[]
@@ -128,5 +125,4 @@ namespace RentAPI.Controllers
                 };
             }
         }
-    }
 }

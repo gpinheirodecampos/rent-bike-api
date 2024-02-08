@@ -1,11 +1,14 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using RentAPI.Context;
 using RentAPI.DTOs.Mappings;
 using RentAPI.Extensions;
 using RentAPI.Filters;
 using RentAPI.Repository;
+using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +37,22 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
+
+// Implementando Token JWT
+builder.Services.AddAuthentication(
+                JwtBearerDefaults.AuthenticationScheme).
+                AddJwtBearer(options =>
+                 options.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuer = true,
+                     ValidateAudience = true,
+                     ValidateLifetime = true,
+                     ValidAudience = builder.Configuration["TokenConfiguration:Audience"],
+                     ValidIssuer = builder.Configuration["TokenConfiguration:Issuer"],
+                     ValidateIssuerSigningKey = true,
+                     IssuerSigningKey = new SymmetricSecurityKey(
+                         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
+                 });
 
 // Registrando servico Unity Of Work
 builder.Services.AddScoped<IUnityOfWork, UnitOfWork>();
