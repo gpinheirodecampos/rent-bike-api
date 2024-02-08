@@ -5,6 +5,8 @@ namespace RentAPI.Repository
 {
     public interface IBikeRepository : IRepository<Bike>
     {
+        IQueryable<Bike> GetBikesImages();
+
         IEnumerable<Bike> GetBikeByAvailability();
 
         Task UpdateBikeAvailability(int id);

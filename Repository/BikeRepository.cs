@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using RentAPI.Context;
 using RentAPI.Models;
 
@@ -10,6 +11,11 @@ namespace RentAPI.Repository
         { 
         }
 
+        public IQueryable<Bike> GetBikesImages()
+        {
+            return Get().Include(x => x.Images);
+        }
+
         public IEnumerable<Bike> GetBikeByAvailability()
         {
             return Get().Where(b => b.Available).ToList();
@@ -18,8 +24,6 @@ namespace RentAPI.Repository
         public async Task UpdateBikeAvailability(int id)
         {
             var bike = await GetByIdAsync(b => b.BikeId == id);
-
-            
 
             bike.Available = false;
 
