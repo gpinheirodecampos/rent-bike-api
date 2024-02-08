@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RentAPI.Context;
+using RentAPI.DTOs;
 using RentAPI.Models;
+using RentAPI.Repository;
 using System.Formats.Asn1;
 
 namespace RentAPI.Controllers
@@ -11,65 +14,75 @@ namespace RentAPI.Controllers
     [ApiController]
     public class RentController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnityOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public RentController(AppDbContext context)
+        public RentController(IUnityOfWork context, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Rent>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<RentDTO>>> GetAsync()
         {
-            var rents = await _context.Rents.AsNoTracking().ToListAsync();
+            var rents = await _unitOfWork.RentRepository.Get().ToListAsync();
+            var rentsDto = _mapper.Map<List<RentDTO>>(rents);
 
-            if (rents is null) { return NotFound("Nao ha rents cadastradas."); }
+            if (rentsDto is null) { return NotFound("Nao ha rents cadastradas."); }
 
-            return rents;
+            return rentsDto;
         }
 
         [HttpGet("{id:int}", Name = "ObterRent")]
-        public async Task<ActionResult<Rent>> GetAsync(int id)
+        public async Task<ActionResult<RentDTO>> GetAsync(int id)
         {
-            var Rent = await _context.Rents.AsNoTracking().FirstOrDefaultAsync(u => u.RentId == id);
+            var rent = await _unitOfWork.RentRepository.GetByIdAsync(r => r.RentId == id);
+            var rentDto = _mapper.Map<RentDTO>(rent);
 
-            if (Rent is null) { return NotFound("Rent nao encontrada."); }
+            if (rentDto is null) { return NotFound("Rent nao encontrada."); }
 
-            return Rent;
+            return rentDto;
         }
 
         [HttpPost]
-        public ActionResult Post(Rent Rent)
+        public async Task<ActionResult> Post(RentDTO rentDto)
         {
-            if (Rent is null) { return BadRequest(); }
+            if (rentDto is null) { return BadRequest(); }
 
-            _context.Rents.Add(Rent);
-            _context.SaveChanges();
+            var rent = _mapper.Map<Rent>(rentDto);
+
+            _unitOfWork.RentRepository.Add(rent);
+            await _unitOfWork.Commit();
+
+            var rentDTO = _mapper.Map<RentDTO>(rent);
 
             return new CreatedAtRouteResult("ObterRent",
-                new { id = Rent.RentId }, Rent);
+                new { id = rent.RentId }, rentDTO);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Rent rent)
+        public async Task<ActionResult> Put(int id, RentDTO rentDto)
         {
+            var rent = _mapper.Map<Rent>(rentDto);
+
             if (id != rent.RentId) { return BadRequest(); }
 
-            _context.Entry(rent).State = EntityState.Modified;
-            _context.SaveChanges();
+            _unitOfWork.RentRepository.Update(rent);
+            await _unitOfWork.Commit();
 
             return Ok(rent);
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var Rent = _context.Rents.FirstOrDefault(u => u.RentId == id);
+            var rent = await _unitOfWork.RentRepository.GetByIdAsync(r => r.RentId ==  id);
 
-            if (Rent is null) { return NotFound("Rent nao encontrada."); }
+            if (rent is null) { return NotFound("Rent nao encontrada."); }
 
-            _context.Rents.Remove(Rent);
-            _context.SaveChanges();
+            _unitOfWork.RentRepository.Delete(rent);
+            await _unitOfWork.Commit();
 
             return Ok();
         }

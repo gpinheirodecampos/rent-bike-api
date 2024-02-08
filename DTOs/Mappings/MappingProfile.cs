@@ -8,6 +8,9 @@ namespace RentAPI.DTOs.Mappings
         public MappingProfile() 
         {
             CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<Rent, RentDTO>().ReverseMap();
+            CreateMap<Bike, BikeDTO>().ReverseMap();
+            CreateMap<Image, ImageDTO>().ReverseMap();
         }
     }
 }

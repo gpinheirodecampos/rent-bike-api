@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RentAPI.Context;
+using RentAPI.DTOs;
 using RentAPI.Models;
+using RentAPI.Repository;
 
 namespace RentAPI.Controllers
 {
@@ -10,65 +13,75 @@ namespace RentAPI.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnityOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public ImageController(AppDbContext context)
+        public ImageController(IUnityOfWork context, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Image>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<ImageDTO>>> GetAsync()
         {
-            var images = await _context.Images.AsNoTracking().ToListAsync();
+            var images = await _unitOfWork.ImageRepository.Get().ToListAsync();
 
-            if (images is null) { return NotFound("Nao ha imagens cadastradas."); }
+            var imagesDto = _mapper.Map<List<ImageDTO>>(images);
 
-            return images;
+            if (imagesDto is null) { return NotFound("Nao ha imagens cadastradas."); }
+
+            return imagesDto;
         }
 
         [HttpGet("{id:int}", Name = "ObterImage")]
-        public async Task<ActionResult<Image>> GetAsync(int id)
+        public async Task<ActionResult<ImageDTO>> GetAsync(int id)
         {
-            var image = await _context.Images.AsNoTracking().FirstOrDefaultAsync(u => u.ImageId == id);
+            var image = await _unitOfWork.ImageRepository.GetByIdAsync(i => i.ImageId == id);
 
-            if (image is null) { return NotFound("Imagem nao encontrada."); }
+            var imageDto = _mapper.Map<ImageDTO>(image);
 
-            return image;
+            if (imageDto is null) { return NotFound("Imagem nao encontrada."); }
+
+            return imageDto;
         }
 
         [HttpPost]
-        public ActionResult Post(Image image)
+        public async Task<ActionResult> Post(ImageDTO imageDto)
         {
-            if (image is null) { return BadRequest(); }
+            if (imageDto is null) { return BadRequest(); }
 
-            _context.Images.Add(image);
-            _context.SaveChanges();
+            var image = _mapper.Map<Image>(imageDto);
+
+            _unitOfWork.ImageRepository.Add(image);
+            await _unitOfWork.Commit();
 
             return new CreatedAtRouteResult("ObterImage",
                 new { id = image.BikeId }, image);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Image image)
+        public async Task<ActionResult> Put(int id, ImageDTO imageDto)
         {
-            if (id != image.BikeId) { return BadRequest(); }
+            if (id != imageDto.BikeId) { return BadRequest(); }
 
-            _context.Entry(image).State = EntityState.Modified;
-            _context.SaveChanges();
+            var image = _mapper.Map<Image>(imageDto);
 
-            return Ok(image);
+            _unitOfWork.ImageRepository.Update(image);
+            await _unitOfWork.Commit();
+
+            return Ok(imageDto);
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var image = _context.Images.FirstOrDefault(u => u.ImageId == id);
+            var image = await _unitOfWork.ImageRepository.GetByIdAsync(i => i.ImageId == id);
 
             if (image is null) { return NotFound("Image nao encontrada."); }
 
-            _context.Images.Remove(image);
-            _context.SaveChanges();
+            _unitOfWork.ImageRepository.Delete(image);
+            await _unitOfWork.Commit();
 
             return Ok();
         }

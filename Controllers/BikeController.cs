@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RentAPI.Context;
+using RentAPI.DTOs;
 using RentAPI.Models;
+using RentAPI.Repository;
 
 namespace RentAPI.Controllers
 {
@@ -10,75 +13,87 @@ namespace RentAPI.Controllers
     [ApiController]
     public class BikeController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnityOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public BikeController(AppDbContext context)
+        public BikeController(IUnityOfWork context, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Bike>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<BikeDTO>>> GetAsync()
         {
-            var bikes = await _context.Bikes.AsNoTracking().ToListAsync();
+            var bikes = await _unitOfWork.BikeRepository.Get().ToListAsync();
 
-            if (bikes is null) { return NotFound("Nao ha bikes cadastradas."); }
+            var bikesDto = _mapper.Map<List<BikeDTO>>(bikes);
 
-            return bikes;
+            if (bikesDto is null) { return NotFound("Nao ha bikes cadastradas."); }
+
+            return bikesDto;
         }
 
         [HttpGet("{id:int}", Name = "ObterBike")]
-        public async Task<ActionResult<Bike>> GetAsync(int id)
+        public async Task<ActionResult<BikeDTO>> GetAsync(int id)
         {
-            var bike = await _context.Bikes.AsNoTracking().FirstOrDefaultAsync(u => u.BikeId == id);
+            var bike = await _unitOfWork.BikeRepository.GetByIdAsync(b => b.BikeId == id);
 
-            if (bike is null) { return NotFound("Bike nao encontrada."); }
+            var bikeDto = _mapper.Map<BikeDTO>(bike);
 
-            return bike;
+            if (bikeDto is null) { return NotFound("Bike nao encontrada."); }
+
+            return bikeDto;
         }
 
         [HttpGet("images")]
-        public async Task<ActionResult<IEnumerable<Bike>>> GetBikesImagesAsync()
+        public async Task<ActionResult<IEnumerable<BikeDTO>>> GetBikesImagesAsync()
         {
-            var bikes = await _context.Bikes.AsNoTracking().Include(i => i.Images).ToListAsync();
+            var bikes = await _unitOfWork.BikeRepository.GetBikesImages().ToListAsync();
 
-            if (bikes is null) { return NotFound("Nao ha bikes cadastradas."); }
+            var bikesDto = _mapper.Map<List<BikeDTO>>(bikes);
 
-            return bikes;
+            if (bikesDto is null) { return NotFound("Nao ha bikes cadastradas."); }
+
+            return bikesDto;
         }
 
         [HttpPost]
-        public ActionResult Post(Bike bike)
+        public async Task<ActionResult> Post(BikeDTO bikeDto)
         {
-            if (bike is null) { return BadRequest(); }
+            if (bikeDto is null) { return BadRequest(); }
 
-            _context.Bikes.Add(bike);
-            _context.SaveChanges();
+            var bike = _mapper.Map<Bike>(bikeDto);
+
+            _unitOfWork.BikeRepository.Add(bike);
+            await _unitOfWork.Commit();
 
             return new CreatedAtRouteResult("ObterBike",
-                new { id = bike.BikeId }, bike);
+                new { id = bikeDto.BikeId }, bikeDto);
         }
 
         [HttpPut("{id:int}")]
-        public ActionResult Put(int id, Bike bike)
+        public async Task<ActionResult> Put(int id, BikeDTO bikeDto)
         {
-            if (id != bike.BikeId) { return BadRequest(); }
+            if (id != bikeDto.BikeId) { return BadRequest("O id da bike digitada no body nao confere com o id digitado na rota"); }
 
-            _context.Entry(bike).State = EntityState.Modified;
-            _context.SaveChanges();
+            var bike = _mapper.Map<Bike>(bikeDto);
 
-            return Ok(bike);
+            _unitOfWork.BikeRepository.Update(bike);
+            await _unitOfWork.Commit();
+
+            return Ok(bikeDto);
         }
 
         [HttpDelete("{id:int}")]
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var bike = _context.Bikes.FirstOrDefault(u => u.BikeId == id);
+            var bike = await _unitOfWork.BikeRepository.GetByIdAsync(b => b.BikeId ==  id);
 
             if (bike is null) { return NotFound("Bike nao encontrada."); }
 
-            _context.Bikes.Remove(bike);
-            _context.SaveChanges();
+            _unitOfWork.BikeRepository.Delete(bike);
+            await _unitOfWork.Commit();
 
             return Ok();
         }
