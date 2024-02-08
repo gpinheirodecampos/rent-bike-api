@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static RentAPI.Enums.Enum;
 
 namespace RentAPI.Models
 {
@@ -34,14 +35,5 @@ namespace RentAPI.Models
 
         public ICollection<Image> Images { get; }
 
-    }
-
-    public enum TypeBike
-    {
-        [Description("New")]
-        New = 1,
-
-        [Description("Used")]
-        Used = 2
     }
 }
