@@ -4,11 +4,11 @@ using System.Text.Json.Serialization;
 
 namespace RentAPI.Models
 {
-    [Table("Image")]
+    [Table("image")]
     public class Image
     {
         [Key]
-        public int ImageId { get; set; }
+        public Guid ImageId { get; set; }
 
         [Required]
         [StringLength(300)]
@@ -17,7 +17,7 @@ namespace RentAPI.Models
         [JsonIgnore]
         public Bike? Bike { get; set; } = null!;
 
-        public int? BikeId { get; set; }
+        public Guid? BikeId { get; set; }
 
     }
 }

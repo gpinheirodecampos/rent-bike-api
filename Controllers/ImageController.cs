@@ -35,7 +35,7 @@ namespace RentAPI.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterImage")]
-        public async Task<ActionResult<ImageDTO>> GetAsync(int id)
+        public async Task<ActionResult<ImageDTO>> GetAsync(Guid id)
         {
             var image = await _unitOfWork.ImageRepository.GetByIdAsync(i => i.ImageId == id);
 
@@ -56,12 +56,11 @@ namespace RentAPI.Controllers
             _unitOfWork.ImageRepository.Add(image);
             await _unitOfWork.Commit();
 
-            return new CreatedAtRouteResult("ObterImage",
-                new { id = image.BikeId }, image);
+            return Ok("Imagem registrada com sucesso!");
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, ImageDTO imageDto)
+        public async Task<ActionResult> Put(Guid id, ImageDTO imageDto)
         {
             if (id != imageDto.BikeId) { return BadRequest(); }
 
@@ -74,7 +73,7 @@ namespace RentAPI.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             var image = await _unitOfWork.ImageRepository.GetByIdAsync(i => i.ImageId == id);
 

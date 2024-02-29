@@ -35,7 +35,7 @@ namespace RentAPI.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterBike")]
-        public async Task<ActionResult<BikeDTO>> GetAsync(int id)
+        public async Task<ActionResult<BikeDTO>> GetAsync(Guid id)
         {
             var bike = await _unitOfWork.BikeRepository.GetByIdAsync(b => b.BikeId == id);
 
@@ -68,12 +68,11 @@ namespace RentAPI.Controllers
             _unitOfWork.BikeRepository.Add(bike);
             await _unitOfWork.Commit();
 
-            return new CreatedAtRouteResult("ObterBike",
-                new { id = bikeDto.BikeId }, bikeDto);
+            return Ok("Bike registrada com sucesso!");
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, BikeDTO bikeDto)
+        public async Task<ActionResult> Put(Guid id, BikeDTO bikeDto)
         {
             if (id != bikeDto.BikeId) { return BadRequest("O id da bike digitada no body nao confere com o id digitado na rota"); }
 
@@ -86,7 +85,7 @@ namespace RentAPI.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             var bike = await _unitOfWork.BikeRepository.GetByIdAsync(b => b.BikeId ==  id);
 

@@ -39,7 +39,7 @@ namespace RentAPI.Controllers
 
         // user/{id}
         [HttpGet("{id:int}", Name = "ObterUser")]
-        public async Task<ActionResult<UserDTO>> Get(int id)
+        public async Task<ActionResult<UserDTO>> Get(Guid id)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(u => u.UserId == id);
             var userDto = _mapper.Map<UserDTO>(user);
@@ -73,12 +73,11 @@ namespace RentAPI.Controllers
 
             var userDTO = _mapper.Map<UserDTO>(user);
 
-            return new CreatedAtRouteResult("ObterUser", 
-                new { id = user.UserId }, userDTO);
+            return Ok("User registrado com sucesso!");
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, UserDTO userDto)
+        public async Task<ActionResult> Put(Guid id, UserDTO userDto)
         {
             var user = _mapper.Map<User>(userDto);
 
@@ -91,7 +90,7 @@ namespace RentAPI.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(u => u.UserId == id);
 

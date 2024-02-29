@@ -35,7 +35,7 @@ namespace RentAPI.Controllers
         }
 
         [HttpGet("{id:int}", Name = "ObterRent")]
-        public async Task<ActionResult<RentDTO>> GetAsync(int id)
+        public async Task<ActionResult<RentDTO>> GetAsync(Guid id)
         {
             var rent = await _unitOfWork.RentRepository.GetByIdAsync(r => r.RentId == id);
             var rentDto = _mapper.Map<RentDTO>(rent);
@@ -57,12 +57,11 @@ namespace RentAPI.Controllers
 
             var rentDTO = _mapper.Map<RentDTO>(rent);
 
-            return new CreatedAtRouteResult("ObterRent",
-                new { id = rent.RentId }, rentDTO);
+            return Ok("Rent registrado com sucesso!");
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, RentDTO rentDto)
+        public async Task<ActionResult> Put(Guid id, RentDTO rentDto)
         {
             var rent = _mapper.Map<Rent>(rentDto);
 
@@ -75,7 +74,7 @@ namespace RentAPI.Controllers
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(Guid id)
         {
             var rent = await _unitOfWork.RentRepository.GetByIdAsync(r => r.RentId ==  id);
 

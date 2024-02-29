@@ -21,7 +21,7 @@ namespace RentAPI.Repository
             return Get().Where(b => b.Available).ToList();
         }
 
-        public async Task UpdateBikeAvailability(int id)
+        public async Task UpdateBikeAvailability(Guid id)
         {
             var bike = await GetByIdAsync(b => b.BikeId == id);
 
@@ -32,5 +32,11 @@ namespace RentAPI.Repository
             _context.SaveChanges();
         }
 
+        public override void Add(Bike entity)
+        {
+            entity.BikeId = Guid.NewGuid();
+
+            base.Add(entity);
+        }
     }
 }

@@ -4,11 +4,11 @@ using System.Text.Json.Serialization;
 
 namespace RentAPI.Models
 {
-    [Table("Rent")]
+    [Table("rent")]
     public class Rent
     {
         [Key]
-        public int RentId { get; set; }
+        public Guid RentId { get; set; }
 
         public DateTime? DateEnd { get; set; }
 
@@ -17,11 +17,11 @@ namespace RentAPI.Models
         [JsonIgnore]
         public Bike Bike { get; set; } = null!;
 
-        public int BikeId { get; set; }
+        public Guid BikeId { get; set; }
 
         [JsonIgnore]
         public User User { get; set; } = null!;
 
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

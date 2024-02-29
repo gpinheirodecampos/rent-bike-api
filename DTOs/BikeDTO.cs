@@ -11,16 +11,16 @@ namespace RentAPI.DTOs
             Images = new Collection<ImageDTO>();
         }
 
-        public int BikeId { get; set; }
+        public Guid? BikeId { get; set; }
 
         public string? Name { get; set; }
 
         public string? Description { get; set; }
 
-        public bool Available { get; set; }
+        public bool? Available { get; set; }
 
-        public TypeBike TypeBike { get; set; }
+        public TypeBike? TypeBike { get; set; }
 
-        public ICollection<ImageDTO> Images { get; set; }
+        public ICollection<ImageDTO>? Images { get; set; }
     }
 }

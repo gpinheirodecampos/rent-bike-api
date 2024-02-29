@@ -4,10 +4,10 @@ namespace RentAPI.DTOs
 {
     public class ImageDTO
     {
-        public int ImageId { get; set; }
+        public Guid? ImageId { get; set; }
 
         public string? Url { get; set; }
 
-        public int? BikeId { get; set; }
+        public Guid? BikeId { get; set; }
     }
 }

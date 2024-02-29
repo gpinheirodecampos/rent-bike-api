@@ -7,7 +7,7 @@ using static RentAPI.Enums.Enum;
 
 namespace RentAPI.Models
 {
-    [Table("Bike")]
+    [Table("bike")]
     public class Bike
     {
         public Bike() 
@@ -16,7 +16,7 @@ namespace RentAPI.Models
         }
 
         [Key]
-        public int BikeId { get; set; }
+        public Guid BikeId { get; set; }
 
         [Required]
         [StringLength(80, ErrorMessage = "O nome da bike deve conter no maximo {1} e no minimo {2} caracteres.", MinimumLength = 4)]

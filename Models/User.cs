@@ -7,12 +7,12 @@ using System.Text.Json.Serialization;
 
 namespace RentAPI.Models
 {
-    [Table("User")]
+    [Table("user")]
     [Index(nameof(UserEmail), IsUnique = true)]
     public class User
     {
         [Key]
-        public int UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [Required]
         [StringLength(80, ErrorMessage = "O username deve conter no maximo {1} e no minimo {2} caracteres.", MinimumLength = 2)]
