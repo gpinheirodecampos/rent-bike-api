@@ -6,16 +6,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace RentAPI.Migrations
 {
-    public partial class Identity : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<bool>(
-                name: "Available",
-                table: "Bike",
-                type: "tinyint(1)",
-                nullable: false,
-                defaultValue: false);
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
@@ -68,6 +64,44 @@ namespace RentAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "bike",
+                columns: table => new
+                {
+                    BikeId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Name = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Description = table.Column<string>(type: "varchar(300)", maxLength: 300, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Available = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    TypeBike = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_bike", x => x.BikeId);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "user",
+                columns: table => new
+                {
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    UserName = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UserEmail = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Password = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ConfirmPassword = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user", x => x.UserId);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -198,6 +232,54 @@ namespace RentAPI.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "image",
+                columns: table => new
+                {
+                    ImageId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    Url = table.Column<string>(type: "varchar(300)", maxLength: 300, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BikeId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_image", x => x.ImageId);
+                    table.ForeignKey(
+                        name: "FK_image_bike_BikeId",
+                        column: x => x.BikeId,
+                        principalTable: "bike",
+                        principalColumn: "BikeId");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "rent",
+                columns: table => new
+                {
+                    RentId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    DateEnd = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DateStart = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    BikeId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
+                    UserId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_rent", x => x.RentId);
+                    table.ForeignKey(
+                        name: "FK_rent_bike_BikeId",
+                        column: x => x.BikeId,
+                        principalTable: "bike",
+                        principalColumn: "BikeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_rent_user_UserId",
+                        column: x => x.UserId,
+                        principalTable: "user",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -234,6 +316,27 @@ namespace RentAPI.Migrations
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_image_BikeId",
+                table: "image",
+                column: "BikeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_rent_BikeId",
+                table: "rent",
+                column: "BikeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_rent_UserId",
+                table: "rent",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_UserEmail",
+                table: "user",
+                column: "UserEmail",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -254,14 +357,22 @@ namespace RentAPI.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "image");
+
+            migrationBuilder.DropTable(
+                name: "rent");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "Available",
-                table: "Bike");
+            migrationBuilder.DropTable(
+                name: "bike");
+
+            migrationBuilder.DropTable(
+                name: "user");
         }
     }
 }

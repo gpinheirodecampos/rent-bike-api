@@ -11,8 +11,8 @@ using RentAPI.Context;
 namespace RentAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231114225821_Identity")]
-    partial class Identity
+    [Migration("20240212000352_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -215,9 +215,9 @@ namespace RentAPI.Migrations
 
             modelBuilder.Entity("RentAPI.Models.Bike", b =>
                 {
-                    b.Property<int>("BikeId")
+                    b.Property<Guid>("BikeId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
                     b.Property<bool>("Available")
                         .HasColumnType("tinyint(1)");
@@ -237,17 +237,17 @@ namespace RentAPI.Migrations
 
                     b.HasKey("BikeId");
 
-                    b.ToTable("Bike");
+                    b.ToTable("bike");
                 });
 
             modelBuilder.Entity("RentAPI.Models.Image", b =>
                 {
-                    b.Property<int>("ImageId")
+                    b.Property<Guid>("ImageId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
-                    b.Property<int?>("BikeId")
-                        .HasColumnType("int");
+                    b.Property<Guid?>("BikeId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -258,17 +258,17 @@ namespace RentAPI.Migrations
 
                     b.HasIndex("BikeId");
 
-                    b.ToTable("Image");
+                    b.ToTable("image");
                 });
 
             modelBuilder.Entity("RentAPI.Models.Rent", b =>
                 {
-                    b.Property<int>("RentId")
+                    b.Property<Guid>("RentId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
 
-                    b.Property<int>("BikeId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("BikeId")
+                        .HasColumnType("char(36)");
 
                     b.Property<DateTime?>("DateEnd")
                         .HasColumnType("datetime(6)");
@@ -276,8 +276,8 @@ namespace RentAPI.Migrations
                     b.Property<DateTime?>("DateStart")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
 
                     b.HasKey("RentId");
 
@@ -285,14 +285,17 @@ namespace RentAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Rent");
+                    b.ToTable("rent");
                 });
 
             modelBuilder.Entity("RentAPI.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("ConfirmPassword")
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -314,7 +317,7 @@ namespace RentAPI.Migrations
                     b.HasIndex("UserEmail")
                         .IsUnique();
 
-                    b.ToTable("User");
+                    b.ToTable("user");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
