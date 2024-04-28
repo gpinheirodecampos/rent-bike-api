@@ -16,7 +16,7 @@ namespace RentAPI.Filters
             _logger.LogInformation("## Executando -> OnActionExecuting");
             _logger.LogInformation("##################################");
             _logger.LogInformation($"{DateTime.Now.ToLongTimeString()}");
-            _logger.LogInformation($"Model State: {context.ModelState.IsValid}");
+            _logger.LogInformation($"Request: {context.HttpContext.Request}");
             _logger.LogInformation("##################################");
         }
 
