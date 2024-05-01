@@ -4,9 +4,9 @@ namespace RentAPI.Repository
 {
     public interface IRepository<T>
     {
-        IQueryable<T> Get();
+        IQueryable<T> Get(Expression<Func<T, object>>? include = null);
 
-        Task<T> GetByIdAsync(Expression<Func<T, bool>> predicate);
+        Task<T> GetByIdAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>>? include = null);
 
         void Add(T entity);
 

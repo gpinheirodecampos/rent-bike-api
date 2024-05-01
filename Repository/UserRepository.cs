@@ -13,7 +13,7 @@ namespace RentAPI.Repository
 
         public async Task<User> GetUserByEmail(Expression<Func<User, bool>> predicate)
         {
-            return await _context.Users.FirstOrDefaultAsync(predicate);
+            return await _context.Users.AsNoTracking().Include(x => x.Rent).FirstOrDefaultAsync(predicate);
         }
     }
 }
