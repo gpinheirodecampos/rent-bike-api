@@ -15,12 +15,12 @@ namespace RentAPI.Models
         public DateTime? DateStart { get; set; }
 
         [JsonIgnore]
-        public Bike Bike { get; set; } = null!;
+        public Bike Bike { get; } = null!;
 
         public Guid BikeId { get; set; }
 
         [JsonIgnore]
-        public User User { get; set; } = null!;
+        public User User { get; } = null!;
 
         public Guid UserId { get; set; }
     }
