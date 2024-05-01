@@ -8,6 +8,7 @@ using RentAPI.DTOs.Mappings;
 using RentAPI.Extensions;
 using RentAPI.Filters;
 using RentAPI.Repository;
+using RentAPI.Services;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -62,6 +63,9 @@ builder.Services.AddAuthentication(
 
 // Registrando servico Unity Of Work
 builder.Services.AddScoped<IUnityOfWork, UnitOfWork>();
+
+// Registrando servico UserService
+builder.Services.AddScoped<IUserService, UserService>();
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
