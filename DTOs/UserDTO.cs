@@ -1,9 +1,14 @@
 ﻿using RentAPI.Models;
+using System.Collections.ObjectModel;
 
 namespace RentAPI.DTOs
 {
     public class UserDTO
     {
+        public UserDTO()
+        {
+            Rent = new Collection<RentDTO>();
+        }
         public Guid? UserId { get; set; }
 
         public string? UserName { get; set; }
@@ -12,6 +17,6 @@ namespace RentAPI.DTOs
 
         public string? Password { get; set; }
 
-        public ICollection<Rent>? Rent { get; set; }
+        public ICollection<RentDTO>? Rent { get; set; }
     }
 }

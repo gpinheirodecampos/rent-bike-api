@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RentAPI.Validations;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
@@ -11,6 +12,11 @@ namespace RentAPI.Models
     [Index(nameof(UserEmail), IsUnique = true)]
     public class User
     {
+        public User()
+        {
+            Rent = new Collection<Rent>();
+        }
+
         [Key]
         public Guid UserId { get; set; }
 
@@ -30,7 +36,6 @@ namespace RentAPI.Models
 
         public string? ConfirmPassword { get; set; }
 
-        [JsonIgnore]
-        public ICollection<Rent>? Rent { get; set; }
+        public ICollection<Rent> Rent { get; set; }
     }
 }
