@@ -8,6 +8,7 @@ using RentAPI.DTOs;
 using RentAPI.Filters;
 using RentAPI.Models;
 using RentAPI.Repository;
+using RentAPI.Services;
 
 namespace RentAPI.Controllers
 {
@@ -15,13 +16,11 @@ namespace RentAPI.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUnityOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IUserService _userService;
 
-        public UserController(IUnityOfWork context, IMapper mapper)
+        public UserController(IUserService userService)
         {
-            _unitOfWork = context;
-            _mapper = mapper;
+            _userService = userService;
         }
 
         // user/
@@ -29,75 +28,68 @@ namespace RentAPI.Controllers
         [ServiceFilter(typeof(ApiLoggingFilter))]
         public async Task<ActionResult<IEnumerable<UserDTO>>> Get()
         {
-            var users = await _unitOfWork.UserRepository.Get().ToListAsync();
-            var usersDto = _mapper.Map<List<UserDTO>>(users);
+            var users = await _userService.Get();
 
-            if (usersDto is null) { return NotFound("Nao ha usuarios cadastrados."); }
+            if (users.Count() == 0) { return NotFound("Não há usuários cadastrados."); }
 
-            return usersDto;
+            return Ok(users);
         }
 
         // user/{id}
-        [HttpGet("{id:int}", Name = "ObterUser")]
+        [HttpGet("{id:Guid}", Name = "ObterUser")]
+        [ServiceFilter(typeof(ApiLoggingFilter))]
         public async Task<ActionResult<UserDTO>> Get(Guid id)
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(u => u.UserId == id);
-            var userDto = _mapper.Map<UserDTO>(user);
+            var user = await _userService.GetByIdAsync(id);
 
-            if (userDto is null) { return NotFound("Usuario nao encontrado."); }
+            if (user is null) { return NotFound("Usuário não encontrado."); }
 
-            return userDto;
+            return Ok(user);
         }
 
         // user/{email}
         [HttpGet("{email}")]
         public async Task<ActionResult<UserDTO>> Get(string email)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByEmail(u => u.UserEmail == email);
-            var userDto = _mapper.Map<UserDTO>(user);
+            var user = await _userService.GetByEmailAsync(email);
 
-            if (userDto is null) { return NotFound("Usuario nao encontrado."); }
+            if (user is null) { return NotFound("Usuário não encontrado."); }
 
-            return userDto;
+            return Ok(user);
         }
 
+        // user/
         [HttpPost]
+        [ServiceFilter(typeof(ApiLoggingFilter))]
         public async Task<ActionResult> Post(UserDTO userDto)
         {
-            var user = _mapper.Map<User>(userDto);
+            var user = await _userService.AddAsync(userDto);
 
             if (user is null) { return BadRequest(); }
-
-            _unitOfWork.UserRepository.Add(user);
-            await _unitOfWork.Commit();
-
-            var userDTO = _mapper.Map<UserDTO>(user);
 
             return Ok("User registrado com sucesso!");
         }
 
+        // user/{id}
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(Guid id, UserDTO userDto)
         {
-            var user = _mapper.Map<User>(userDto);
+            if (id != userDto.UserId) { return BadRequest(); }
 
-            if (id != user.UserId) { return BadRequest(); }
-
-            _unitOfWork.UserRepository.Update(user);
-            await _unitOfWork.Commit();
+            await _userService.UpdateAsync(userDto);
 
             return Ok(userDto);
         }
 
+        // user/{id}
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(u => u.UserId == id);
+            var user = await _userService.GetByIdAsync(id);
 
-            if (user is null) { return NotFound("Usuario nao encontrado."); }
+            if (user is null) { return NotFound("Usuário não encontrado."); }
 
-            _unitOfWork.UserRepository.Delete(user);
-            await _unitOfWork.Commit();
+            await _userService.DeleteAsync(id);
 
             return Ok();
         }
