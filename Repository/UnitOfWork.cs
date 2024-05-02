@@ -1,4 +1,5 @@
 ﻿using RentAPI.Context;
+using RentAPI.Repository.Interfaces;
 
 namespace RentAPI.Repository
 {

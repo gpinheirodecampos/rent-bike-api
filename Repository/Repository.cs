@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RentAPI.Context;
+using RentAPI.Repository.Interfaces;
 using System.Linq.Expressions;
 
 namespace RentAPI.Repository
@@ -13,14 +14,28 @@ namespace RentAPI.Repository
             _context = contexto;
         }
 
-        public IQueryable<T> Get()
+        public IQueryable<T> Get(Expression<Func<T, object>>? include = null)
         {
-            return _context.Set<T>().AsNoTracking();
+            IQueryable<T> query = _context.Set<T>().AsNoTracking();
+
+            if (include != null)
+            {
+                query = query.Include(include);
+            }
+
+            return query;
         }
 
-        public async Task<T> GetByIdAsync(Expression<Func<T, bool>> predicate)
+        public async Task<T> GetByIdAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>>? include = null)
         {
-            return await _context.Set<T>().SingleOrDefaultAsync(predicate);
+            IQueryable<T> query = _context.Set<T>().AsNoTracking().Where(predicate);
+
+            if (include != null)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.SingleOrDefaultAsync();
         }
 
         virtual public void Add(T entity)

@@ -15,7 +15,7 @@ namespace RentAPI.Models
         public string? Url { get; set; }
 
         [JsonIgnore]
-        public Bike? Bike { get; set; } = null!;
+        public Bike? Bike { get; } = null!;
 
         public Guid? BikeId { get; set; }
 

@@ -1,4 +1,4 @@
-﻿namespace RentAPI.Repository
+﻿namespace RentAPI.Repository.Interfaces
 {
     public interface IUnityOfWork
     {

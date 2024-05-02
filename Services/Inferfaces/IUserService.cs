@@ -1,13 +1,13 @@
 ﻿using RentAPI.DTOs;
 
-namespace RentAPI.Services
+namespace RentAPI.Services.Inferfaces
 {
     public interface IUserService
     {
-        IEnumerable<UserDTO>Get();
+        Task<IEnumerable<UserDTO>> Get();
         Task<UserDTO> GetByIdAsync(Guid id);
         Task<UserDTO> GetByEmailAsync(string email);
-        Task AddAsync(UserDTO userDto);
+        Task<UserDTO> AddAsync(UserDTO userDto);
         Task UpdateAsync(UserDTO userDto);
         Task DeleteAsync(Guid id);
     }

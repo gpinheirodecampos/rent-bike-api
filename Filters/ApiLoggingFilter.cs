@@ -5,26 +5,39 @@ namespace RentAPI.Filters
     public class ApiLoggingFilter : IActionFilter
     {
         // Injecao de dependencia
-        private readonly ILogger<ApiLoggingFilter> _logger;
-        public ApiLoggingFilter(ILogger<ApiLoggingFilter> logger)
+        private readonly ILogger _logger;
+        public ApiLoggingFilter(ILoggerFactory logger)
         {
-            _logger = logger;
+            _logger = logger.CreateLogger(""); ;
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            _logger.LogInformation("## Executando -> OnActionExecuting");
+            // montando log
+            var logRequest = context.HttpContext.Request.Method + " " + context.HttpContext.Request.Scheme + "://" + context.HttpContext.Request.Host + context.HttpContext.Request.Path;
+
+            var logResponse = context.HttpContext.Response.StatusCode == 200 ? "200 OK!" : $"{context.HttpContext.Response.StatusCode} FAIL!";
+
             _logger.LogInformation("##################################");
-            _logger.LogInformation($"{DateTime.Now.ToLongTimeString()}");
-            _logger.LogInformation($"Request: {context.HttpContext.Request}");
+            _logger.LogInformation("### Executando -> OnActionExecuting");
+            _logger.LogInformation($"### Horário: {DateTime.Now.ToLongTimeString()}");
+            _logger.LogInformation($"### Requisição: {logRequest}");
+            _logger.LogInformation($"### Resposta: {logResponse}");
             _logger.LogInformation("##################################");
         }
 
+
         public void OnActionExecuted(ActionExecutedContext context)
         {
-            _logger.LogInformation("## Executando -> OnActionExecuted");
+            var logRequest = context.HttpContext.Request.Method + " " + context.HttpContext.Request.Scheme + "://" + context.HttpContext.Request.Host + context.HttpContext.Request.Path;
+
+            var logResponse = context.HttpContext.Response.StatusCode == 200 ? "200 OK!" : $"{context.HttpContext.Response.StatusCode} FAIL!";
+
             _logger.LogInformation("##################################");
-            _logger.LogInformation($"{DateTime.Now.ToLongTimeString()}");
+            _logger.LogInformation("### Executando -> OnActionExecuted");
+            _logger.LogInformation($"### Horário: {DateTime.Now.ToLongTimeString()}");
+            _logger.LogInformation($"### Requisição: {logRequest}");
+            _logger.LogInformation($"### Resposta: {logResponse}");
             _logger.LogInformation("##################################");
         }
 
