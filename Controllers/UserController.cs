@@ -8,7 +8,7 @@ using RentAPI.DTOs;
 using RentAPI.Filters;
 using RentAPI.Models;
 using RentAPI.Repository;
-using RentAPI.Services;
+using RentAPI.Services.Inferfaces;
 
 namespace RentAPI.Controllers
 {
@@ -71,7 +71,7 @@ namespace RentAPI.Controllers
         }
 
         // user/{id}
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:Guid}")]
         public async Task<ActionResult> Put(Guid id, UserDTO userDto)
         {
             if (id != userDto.UserId) { return BadRequest(); }
@@ -82,7 +82,7 @@ namespace RentAPI.Controllers
         }
 
         // user/{id}
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {
             var user = await _userService.GetByIdAsync(id);
@@ -91,7 +91,7 @@ namespace RentAPI.Controllers
 
             await _userService.DeleteAsync(id);
 
-            return Ok();
+            return Ok("Usuário removido com sucesso!");
         }
     }
 }

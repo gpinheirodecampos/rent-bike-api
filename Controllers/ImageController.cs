@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using RentAPI.Context;
 using RentAPI.DTOs;
 using RentAPI.Models;
-using RentAPI.Repository;
+using RentAPI.Repository.Interfaces;
 
 namespace RentAPI.Controllers
 {

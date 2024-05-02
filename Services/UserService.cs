@@ -2,7 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using RentAPI.DTOs;
 using RentAPI.Models;
-using RentAPI.Repository;
+using RentAPI.Repository.Interfaces;
+using RentAPI.Services.Inferfaces;
 using System;
 
 namespace RentAPI.Services

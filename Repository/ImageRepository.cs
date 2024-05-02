@@ -1,5 +1,6 @@
 ﻿using RentAPI.Context;
 using RentAPI.Models;
+using RentAPI.Repository.Interfaces;
 
 namespace RentAPI.Repository
 {

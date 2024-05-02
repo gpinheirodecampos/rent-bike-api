@@ -8,7 +8,9 @@ using RentAPI.DTOs.Mappings;
 using RentAPI.Extensions;
 using RentAPI.Filters;
 using RentAPI.Repository;
+using RentAPI.Repository.Interfaces;
 using RentAPI.Services;
+using RentAPI.Services.Inferfaces;
 using System.Text;
 using System.Text.Json.Serialization;
 
