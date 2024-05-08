@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\rent-api\RentAPI.csproj" />
+    <ProjectReference Include="..\RentAPI\RentAPI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
