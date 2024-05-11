@@ -38,9 +38,9 @@ namespace RentAPI.Controllers
         // user/{id}
         [HttpGet("{id:Guid}", Name = "ObterUser")]
         [ServiceFilter(typeof(ApiLoggingFilter))]
-        public async Task<ActionResult<UserDTO>> Get(Guid id)
+        public async Task<ActionResult<UserDTO>> GetById(Guid id)
         {
-            var user = await _userService.GetByIdAsync(id);
+            var user = await _userService.GetById(id);
 
             if (user is null) { return NotFound("Usuário não encontrado."); }
 
@@ -49,9 +49,9 @@ namespace RentAPI.Controllers
 
         // user/{email}
         [HttpGet("{email}")]
-        public async Task<ActionResult<UserDTO>> Get(string email)
+        public async Task<ActionResult<UserDTO>> GetByEmail(string email)
         {
-            var user = await _userService.GetByEmailAsync(email);
+            var user = await _userService.GetByEmail(email);
 
             if (user is null) { return NotFound("Usuário não encontrado."); }
 
@@ -63,7 +63,7 @@ namespace RentAPI.Controllers
         [ServiceFilter(typeof(ApiLoggingFilter))]
         public async Task<ActionResult> Post(UserDTO userDto)
         {
-            var user = await _userService.AddAsync(userDto);
+            var user = await _userService.Add(userDto);
 
             if (user is null) { return BadRequest(); }
 
@@ -76,7 +76,7 @@ namespace RentAPI.Controllers
         {
             if (id != userDto.UserId) { return BadRequest(); }
 
-            await _userService.UpdateAsync(userDto);
+            await _userService.Update(userDto);
 
             return Ok(userDto);
         }
@@ -85,11 +85,11 @@ namespace RentAPI.Controllers
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var user = await _userService.GetByIdAsync(id);
+            var user = await _userService.GetById(id);
 
             if (user is null) { return NotFound("Usuário não encontrado."); }
 
-            await _userService.DeleteAsync(id);
+            await _userService.Delete(id);
 
             return Ok("Usuário removido com sucesso!");
         }

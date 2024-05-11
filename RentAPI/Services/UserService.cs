@@ -26,19 +26,19 @@ namespace RentAPI.Services
             return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
-        public async Task<UserDTO> GetByIdAsync(Guid id)
+        public async Task<UserDTO> GetById(Guid id)
         {
             var user = await _unityOfWork.UserRepository.GetByIdAsync(x => x.UserId == id, x => x.Rent);
             return _mapper.Map<UserDTO>(user);
         }
 
-        public async Task<UserDTO> GetByEmailAsync(string email)
+        public async Task<UserDTO> GetByEmail(string email)
         {
             var user = await _unityOfWork.UserRepository.GetUserByEmail(x => x.UserEmail == email);
             return _mapper.Map<UserDTO>(user);
         }
 
-        public async Task<UserDTO> AddAsync(UserDTO userDto)
+        public async Task<UserDTO> Add(UserDTO userDto)
         {
             var userExists = await _unityOfWork.UserRepository.GetUserByEmail(x => x.UserEmail == userDto.UserEmail);
             if (userExists != null) { throw new Exception("Usuário já cadastrado."); }
@@ -50,14 +50,14 @@ namespace RentAPI.Services
             return userDto;
         }
 
-        public async Task UpdateAsync(UserDTO userDto)
+        public async Task Update(UserDTO userDto)
         {
             var user = _mapper.Map<User>(userDto);
             _unityOfWork.UserRepository.Update(user);
             await _unityOfWork.Commit();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task Delete(Guid id)
         {
             var user = await _unityOfWork.UserRepository.GetByIdAsync(x => x.UserId == id);
             _unityOfWork.UserRepository.Delete(user);

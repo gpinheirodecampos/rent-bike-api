@@ -68,7 +68,7 @@ namespace RentAPI.Tests.Controllers
             var user = await _unityOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
 
             // Act
-            var result = await controller.Get(user.UserId);
+            var result = await controller.GetById(user.UserId);
 
             // Assert
             result.Result.Should().BeOfType<OkObjectResult>();
@@ -85,7 +85,7 @@ namespace RentAPI.Tests.Controllers
             var user = await _unityOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
 
             // Act
-            var result = await controller.Get(user.UserEmail);
+            var result = await controller.GetByEmail(user.UserEmail);
 
             // Assert
             result.Result.Should().BeOfType<OkObjectResult>();
@@ -113,6 +113,27 @@ namespace RentAPI.Tests.Controllers
             // Assert
             result.Should().BeOfType<OkObjectResult>();
         }
+
+        [Fact]
+        public async Task UserController_AddUser_ReturnsException()
+        {
+            // Arrange
+            var controller = new UserController(_userService);
+            var user = new UserDTO
+            {
+                UserId = Guid.NewGuid(),
+                UserEmail = "gabs@mail.com",
+                UserName = "gabriel",
+                Password = "123"
+            };
+
+            // Act
+            Func<Task> result = async () => await controller.Post(user);
+
+            // Assert
+            await result.Should().ThrowAsync<Exception>();
+        }
+
 
         [Fact]
         public async Task UserController_UpdateUser_ReturnsOk()

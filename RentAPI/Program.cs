@@ -69,6 +69,9 @@ builder.Services.AddScoped<IUnityOfWork, UnitOfWork>();
 // Registrando servico UserService
 builder.Services.AddScoped<IUserService, UserService>();
 
+// Registrando servico ImageService
+builder.Services.AddScoped<IImageService, ImageService>();
+
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new MappingProfile());
