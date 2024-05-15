@@ -40,10 +40,10 @@ namespace RentAPI.Controllers
             [HttpPost("register")]
             public async Task<ActionResult> RegisterUser([FromBody] UsuarioLoginDTO model)
             {
-                //if (!ModelState.IsValid)
-                //{
-                //    return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
-                //}
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState.Values.SelectMany(e => e.Errors));
+                }
 
                 var user = new IdentityUser
                 {
