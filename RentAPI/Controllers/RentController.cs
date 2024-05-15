@@ -14,10 +14,10 @@ namespace RentAPI.Controllers
     [ApiController]
     public class RentController : ControllerBase
     {
-        private readonly IUnityOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public RentController(IUnityOfWork context, IMapper mapper)
+        public RentController(IUnitOfWork context, IMapper mapper)
         {
             _unitOfWork = context;
             _mapper = mapper;

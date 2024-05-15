@@ -22,7 +22,7 @@ namespace RentAPI.Tests.Controllers
     public class UserControllerTests
     {
         private readonly IMapper _mapper;
-        private readonly IUnityOfWork _unityOfWork;
+        private readonly IUnitOfWork _UnitOfWork;
         private readonly IUserService _userService;
 
         public static DbContextOptions<AppDbContext> dbContextOptions { get; }
@@ -39,8 +39,8 @@ namespace RentAPI.Tests.Controllers
         public UserControllerTests()
         {
             _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()));
-            _unityOfWork = new UnitOfWork(new AppDbContext(dbContextOptions));
-            _userService = new UserService(_unityOfWork, _mapper);
+            _UnitOfWork = new UnitOfWork(new AppDbContext(dbContextOptions));
+            _userService = new UserService(_UnitOfWork, _mapper);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace RentAPI.Tests.Controllers
         {
             // Arrange
             var controller = new UserController(_userService);
-            var user = await _unityOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
+            var user = await _UnitOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
 
             // Act
             var result = await controller.GetById(user.UserId);
@@ -82,7 +82,7 @@ namespace RentAPI.Tests.Controllers
         {
             // Arrange
             var controller = new UserController(_userService);
-            var user = await _unityOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
+            var user = await _UnitOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
 
             // Act
             var result = await controller.GetByEmail(user.UserEmail);
@@ -140,7 +140,7 @@ namespace RentAPI.Tests.Controllers
         {
             // Arrange
             var controller = new UserController(_userService);
-            var user = await _unityOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
+            var user = await _UnitOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
             user.UserName = "gabriel123";
             var userDto = _mapper.Map<UserDTO>(user);
 
@@ -156,7 +156,7 @@ namespace RentAPI.Tests.Controllers
         {
             // Arrange
             var controller = new UserController(_userService);
-            var user = await _unityOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
+            var user = await _UnitOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
             user.UserName = "gabriel123";
             var userDto = _mapper.Map<UserDTO>(user);
 
@@ -172,7 +172,7 @@ namespace RentAPI.Tests.Controllers
         {
             // Arrange
             var controller = new UserController(_userService);
-            var user = await _unityOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
+            var user = await _UnitOfWork.UserRepository.Get(x => x.Rent).FirstOrDefaultAsync();
 
             // Act
             var result = await controller.Delete(user.UserId);

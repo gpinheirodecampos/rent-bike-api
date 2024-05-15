@@ -24,7 +24,7 @@ namespace RentAPI.Tests.Controllers
     public class ImageControllerTests
     {
         private readonly IMapper _mapper;
-        private readonly IUnityOfWork _unityOfWork;
+        private readonly IUnitOfWork _UnitOfWork;
         private readonly IImageService _imageService;
 
         public static DbContextOptions<AppDbContext> dbContextOptions { get; }
@@ -41,8 +41,8 @@ namespace RentAPI.Tests.Controllers
         public ImageControllerTests()
         {
             _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()));
-            _unityOfWork = new UnitOfWork(new AppDbContext(dbContextOptions));
-            _imageService = new ImageService(_unityOfWork, _mapper);
+            _UnitOfWork = new UnitOfWork(new AppDbContext(dbContextOptions));
+            _imageService = new ImageService(_UnitOfWork, _mapper);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace RentAPI.Tests.Controllers
         {
             // Arrange
             var controller = new ImageController(_imageService);
-            var image = await _unityOfWork.ImageRepository.Get().FirstOrDefaultAsync();
+            var image = await _UnitOfWork.ImageRepository.Get().FirstOrDefaultAsync();
 
             // Act
             var result = await controller.GetById(image.ImageId);
@@ -84,7 +84,7 @@ namespace RentAPI.Tests.Controllers
             var image = new ImageDTO
             {
                 ImageId = Guid.NewGuid(),
-                BikeId = await _unityOfWork.BikeRepository.Get().Select(x => x.BikeId).FirstOrDefaultAsync(),
+                BikeId = await _UnitOfWork.BikeRepository.Get().Select(x => x.BikeId).FirstOrDefaultAsync(),
                 Url = "https://www.bing.com"
             };
 
@@ -119,7 +119,7 @@ namespace RentAPI.Tests.Controllers
         {
             // Arrange
             var controller = new ImageController(_imageService);
-            var image = await _unityOfWork.ImageRepository.Get().FirstOrDefaultAsync();
+            var image = await _UnitOfWork.ImageRepository.Get().FirstOrDefaultAsync();
             image!.Url = "https://www.chatgpt.com";
             var imageDTO = _mapper.Map<ImageDTO>(image);
 
@@ -135,7 +135,7 @@ namespace RentAPI.Tests.Controllers
         {
             // Arrange
             var controller = new ImageController(_imageService);
-            var image = await _unityOfWork.ImageRepository.Get().FirstOrDefaultAsync();
+            var image = await _UnitOfWork.ImageRepository.Get().FirstOrDefaultAsync();
             image!.Url = "https://www.chatgpt.com";
             var imageDTO = _mapper.Map<ImageDTO>(image);
 
@@ -151,7 +151,7 @@ namespace RentAPI.Tests.Controllers
         {
             // Arrange
             var controller = new ImageController(_imageService);
-            var image = await _unityOfWork.ImageRepository.Get().FirstOrDefaultAsync();
+            var image = await _UnitOfWork.ImageRepository.Get().FirstOrDefaultAsync();
 
             // Act
             var result = await controller.Delete(image!.ImageId);
