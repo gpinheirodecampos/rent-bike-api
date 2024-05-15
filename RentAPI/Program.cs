@@ -31,7 +31,33 @@ builder.Services.AddControllers(options =>
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "RentAPI", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme()
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Insira o token JWT desta maneira: Bearer {seu token}"
+    });
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 builder.Services.AddScoped<ApiLoggingFilter>();
 
 // Adicionando string de conexao
@@ -48,29 +74,37 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddDefaultTokenProviders();
 
 // Implementando Token JWT
+var secret = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]);
+
 builder.Services.AddAuthentication(
                 JwtBearerDefaults.AuthenticationScheme).
                 AddJwtBearer(options =>
-                 options.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateIssuer = true,
-                     ValidateAudience = true,
-                     ValidateLifetime = true,
-                     ValidAudience = builder.Configuration["TokenConfiguration:Audience"],
-                     ValidIssuer = builder.Configuration["TokenConfiguration:Issuer"],
-                     ValidateIssuerSigningKey = true,
-                     IssuerSigningKey = new SymmetricSecurityKey(
-                         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]))
-                 });
+                {
+                    options.SaveToken = true;
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidAudience = builder.Configuration["TokenConfiguration:Audience"],
+                        ValidIssuer = builder.Configuration["TokenConfiguration:Issuer"],
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(secret)
+                    };
+                });
 
 // Registrando servico Unity Of Work
-builder.Services.AddScoped<IUnityOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Registrando servico UserService
 builder.Services.AddScoped<IUserService, UserService>();
 
 // Registrando servico ImageService
 builder.Services.AddScoped<IImageService, ImageService>();
+
+// Registrando servico BikeService
+builder.Services.AddScoped<IBikeService, BikeService>();
 
 var mappingConfig = new MapperConfiguration(mc =>
 {
