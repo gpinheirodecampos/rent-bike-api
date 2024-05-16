@@ -12,11 +12,6 @@ namespace RentAPI.Repository
         { 
         }
 
-        public IQueryable<Bike> GetBikesImages()
-        {
-            return Get().Include(x => x.Images);
-        }
-
         public IEnumerable<Bike> GetBikeByAvailability()
         {
             return Get().Where(b => b.Available).ToList();
