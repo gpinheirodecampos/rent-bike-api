@@ -143,7 +143,7 @@ namespace RentAPI.Tests.Controllers
             var result = await controller.Put(Guid.NewGuid(), imageDTO);
 
             // Assert
-            result.Should().BeOfType<BadRequestResult>();
+            result.Should().BeOfType<BadRequestObjectResult>();
         }
 
         [Fact]
