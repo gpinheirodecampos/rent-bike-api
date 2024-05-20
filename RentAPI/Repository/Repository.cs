@@ -31,7 +31,7 @@ namespace RentAPI.Repository
             return query;
         }
 
-        public async Task<T> GetByIdAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>>? include = null)
+        public async Task<T> GetByProperty(Expression<Func<T, bool>> predicate, Expression<Func<T, object>>? include = null)
         {
             IQueryable<T> query = _context.Set<T>().AsNoTracking().Where(predicate);
 

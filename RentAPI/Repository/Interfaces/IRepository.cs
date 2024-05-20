@@ -6,7 +6,7 @@ namespace RentAPI.Repository.Interfaces
     {
         IQueryable<T> Get(Expression<Func<T, object>>? include = null);
 
-        Task<T> GetByIdAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>>? include = null);
+        Task<T> GetByProperty(Expression<Func<T, bool>> predicate, Expression<Func<T, object>>? include = null);
 
         void Add(T entity);
 

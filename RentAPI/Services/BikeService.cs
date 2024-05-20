@@ -28,14 +28,14 @@ namespace RentAPI.Services
 
         public async Task<BikeDTO> GetById(Guid id)
         {
-            var bike = await _unitOfWork.BikeRepository.GetByIdAsync(b => b.BikeId == id);
+            var bike = await _unitOfWork.BikeRepository.GetByProperty(b => b.BikeId == id);
 
             return _mapper.Map<BikeDTO>(bike);
         }
 
         public async Task<BikeDTO> Add(BikeDTO bikeDto)
         {
-            var bikeExists = await _unitOfWork.BikeRepository.GetByIdAsync(b => b.BikeId == bikeDto.BikeId);
+            var bikeExists = await _unitOfWork.BikeRepository.GetByProperty(b => b.BikeId == bikeDto.BikeId);
 
             if (bikeExists != null) { throw new Exception("Bike já cadastrada."); }
 

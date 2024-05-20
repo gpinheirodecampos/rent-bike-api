@@ -27,7 +27,7 @@ namespace RentAPI.Services
 
         public async Task<ImageDTO> GetById(Guid id)
         {
-            var image = await _UnitOfWork.ImageRepository.GetByIdAsync(i => i.ImageId == id) ?? throw new Exception("Imagem não encontrada.");
+            var image = await _UnitOfWork.ImageRepository.GetByProperty(i => i.ImageId == id) ?? throw new Exception("Imagem não encontrada.");
 
             return _mapper.Map<ImageDTO>(image);
         }
@@ -53,7 +53,7 @@ namespace RentAPI.Services
 
         public async Task Update(ImageDTO imageDto)
         {
-            var image = await _UnitOfWork.ImageRepository.GetByIdAsync(i => i.ImageId == imageDto.ImageId) ?? throw new Exception("Imagem não encontrada.");
+            var image = await _UnitOfWork.ImageRepository.GetByProperty(i => i.ImageId == imageDto.ImageId) ?? throw new Exception("Imagem não encontrada.");
 
             _mapper.Map(imageDto, image);
             _UnitOfWork.ImageRepository.Update(image);
@@ -63,7 +63,7 @@ namespace RentAPI.Services
 
         public async Task Delete(Guid id)
         {
-            var image = await _UnitOfWork.ImageRepository.GetByIdAsync(i => i.ImageId == id) ?? throw new Exception("Imagem não encontrada.");
+            var image = await _UnitOfWork.ImageRepository.GetByProperty(i => i.ImageId == id) ?? throw new Exception("Imagem não encontrada.");
             _UnitOfWork.ImageRepository.Delete(image);
             await _UnitOfWork.Commit();
         }
