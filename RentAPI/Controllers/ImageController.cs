@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +12,10 @@ using RentAPI.Services.Inferfaces;
 
 namespace RentAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class ImageController : ControllerBase
     {
         private readonly IImageService _imageService;
@@ -22,6 +26,10 @@ namespace RentAPI.Controllers
         }
 
         // image/
+        /// <summary>
+        /// Obtém uma lista de imagens cadastradas.
+        /// </summary>
+        /// <returns>Uma lista de objetos ImageDTO</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ImageDTO>>> Get()
         {
@@ -33,6 +41,11 @@ namespace RentAPI.Controllers
         }
 
         // image/{id}
+        /// <summary>
+        /// Obtém uma imagem específica por Id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Um objeto ImageDTO</returns>
         [HttpGet("{id:int}", Name = "ObterImage")]
         public async Task<ActionResult<ImageDTO>> GetById(Guid id)
         {
@@ -42,6 +55,20 @@ namespace RentAPI.Controllers
         }
 
         // image/
+        /// <summary>
+        /// Inclui uma nova imagem.
+        /// </summary>
+        /// <remarks>
+        /// Exemplo de request:
+        ///     
+        ///     POST /image
+        ///     {
+        ///         "url": "Url da imagem",
+        ///         "bikeId": "Id da bicicleta"
+        ///     }
+        /// </remarks>
+        /// <param name="imageDto"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> Post(ImageDTO imageDto)
         {
@@ -53,6 +80,12 @@ namespace RentAPI.Controllers
         }
 
         // image/{id}
+        /// <summary>
+        /// Atualiza uma imagem.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="imageDto"></param>
+        /// <returns>Um objeto ImageDTO atualizado</returns>
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(Guid id, ImageDTO imageDto)
         {
@@ -64,6 +97,11 @@ namespace RentAPI.Controllers
         }
 
         // image/{id}
+        /// <summary>
+        /// Remove uma imagem.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(Guid id)
         {
@@ -72,7 +110,7 @@ namespace RentAPI.Controllers
 
             await _imageService.Delete(id);
 
-            return Ok();
+            return Ok("Imagem removida com sucesso!");
         }
     }
 }

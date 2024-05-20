@@ -14,6 +14,11 @@ namespace RentAPI.Repository
             _context = contexto;
         }
 
+        /// <summary>
+        /// Função que retorna todos os registros de uma entidade. Usar o include para incluir os relacionamentos.
+        /// </summary>
+        /// <param name="include"></param>
+        /// <returns></returns>
         public IQueryable<T> Get(Expression<Func<T, object>>? include = null)
         {
             IQueryable<T> query = _context.Set<T>().AsNoTracking();

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,56 +8,76 @@ using RentAPI.Context;
 using RentAPI.DTOs;
 using RentAPI.Models;
 using RentAPI.Repository.Interfaces;
+using RentAPI.Services.Inferfaces;
 using System.Formats.Asn1;
 
 namespace RentAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class RentController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IRentService _rentService;
 
-        public RentController(IUnitOfWork context, IMapper mapper)
+        public RentController(IRentService rentService)
         {
-            _unitOfWork = context;
-            _mapper = mapper;
+            _rentService = rentService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RentDTO>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<RentDTO>>> Get()
         {
-            var rents = await _unitOfWork.RentRepository.Get().ToListAsync();
-            var rentsDto = _mapper.Map<List<RentDTO>>(rents);
+            var rents = await _rentService.Get();
 
-            if (rentsDto is null) { return NotFound("Nao ha rents cadastradas."); }
+            if (rents.Count() == 0) { return NotFound("Não há rents cadastradas."); }
 
-            return rentsDto;
+            return Ok(rents);
         }
 
-        [HttpGet("{id:int}", Name = "ObterRent")]
-        public async Task<ActionResult<RentDTO>> GetAsync(Guid id)
+        [HttpGet("{id:Guid}", Name = "ObterRentPorId")]
+        public async Task<ActionResult<RentDTO>> GetById(Guid id)
         {
-            var rent = await _unitOfWork.RentRepository.GetByIdAsync(r => r.RentId == id);
-            var rentDto = _mapper.Map<RentDTO>(rent);
+            if (id == Guid.Empty) { return BadRequest("Id não informado."); }
 
-            if (rentDto is null) { return NotFound("Rent nao encontrada."); }
+            var rent = await _rentService.GetById(id);
 
-            return rentDto;
+            if (rent is null) { return NotFound("Rent não encontrada."); }
+
+            return Ok(rent);
+        }
+
+        [HttpGet("user/{email:string}", Name = "ObterRentPorEmailDoUsuario")]
+        public async Task<ActionResult<RentDTO>> GetByUserEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) { return BadRequest("Email não informado."); }
+
+            var rent = await _rentService.GetByUserEmail(email);
+
+            if (rent is null) { return NotFound("Rent não encontrada."); }
+
+            return Ok(rent);
+        }
+
+        [HttpGet("bike/{id:Guid}", Name = "ObterRentPorIdDaBicicleta")]
+        public async Task<ActionResult<RentDTO>> GetByBikeId(Guid id)
+        {
+            if (id == Guid.Empty) { return BadRequest("Id não informado."); }
+
+            var rent = await _rentService.GetByBikeId(id);
+
+            if (rent is null) { return NotFound("Rent não encontrada."); }
+
+            return Ok(rent);
         }
 
         [HttpPost]
         public async Task<ActionResult> Post(RentDTO rentDto)
         {
-            if (rentDto is null) { return BadRequest(); }
+            if (rentDto.UserId is null || rentDto.BikeId is null) { return BadRequest("Body não informado ou incompleto."); }
 
-            var rent = _mapper.Map<Rent>(rentDto);
-
-            _unitOfWork.RentRepository.Add(rent);
-            await _unitOfWork.Commit();
-
-            var rentDTO = _mapper.Map<RentDTO>(rent);
+            await _rentService.Add(rentDto);
 
             return Ok("Rent registrado com sucesso!");
         }
@@ -63,27 +85,23 @@ namespace RentAPI.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(Guid id, RentDTO rentDto)
         {
-            var rent = _mapper.Map<Rent>(rentDto);
+            if (id != rentDto.RentId) { return BadRequest("Id da rent não corresponde ao Id da requisição."); }
 
-            if (id != rent.RentId) { return BadRequest(); }
+            await _rentService.Update(rentDto);
 
-            _unitOfWork.RentRepository.Update(rent);
-            await _unitOfWork.Commit();
-
-            return Ok(rent);
+            return Ok(rentDto);
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var rent = await _unitOfWork.RentRepository.GetByIdAsync(r => r.RentId ==  id);
+            var rent = await _rentService.GetById(id);
 
-            if (rent is null) { return NotFound("Rent nao encontrada."); }
+            if (rent is null) { return NotFound("Rent não encontrada."); }
 
-            _unitOfWork.RentRepository.Delete(rent);
-            await _unitOfWork.Commit();
+            await _rentService.Delete(id);
 
-            return Ok();
+            return Ok("Rent removido com sucesso!");
         }
     }
 }

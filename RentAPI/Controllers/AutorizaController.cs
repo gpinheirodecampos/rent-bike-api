@@ -30,13 +30,21 @@ namespace RentAPI.Controllers
                 _configuration = configuration;
             }
 
+            /// <summary>
+            /// Obtém uma lista de usuários cadastrados no Identity
+            /// </summary>
+            /// <returns>Uma lista de objetos IdentityUser</returns>
             [HttpGet]
-            public ActionResult<string> Get()
+            public ActionResult<List<IdentityUser>> Get()
             {
-                return "AutorizaController ::  Acessado em  : "
-                   + DateTime.Now.ToLongDateString();
+                return _userManager.Users.ToList();
             }
 
+            /// <summary>
+            /// Registra um novo usuário no Identity
+            /// </summary>
+            /// <param name="model"></param>
+            /// <returns>Um token JWT</returns>
             [HttpPost("register")]
             public async Task<ActionResult> RegisterUser([FromBody] UsuarioLoginDTO model)
             {
@@ -63,7 +71,12 @@ namespace RentAPI.Controllers
                 return Ok(GeraToken(model));
             }
 
-            [HttpPost("login")]
+        /// <summary>
+        /// Verifica as credenciais do usuário e retorna um token JWT
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <returns>Um token JWT</returns>
+        [HttpPost("login")]
             public async Task<ActionResult> Login([FromBody] UsuarioLoginDTO userInfo)
             {
                 //verifica se o modelo é válido

@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +12,10 @@ using RentAPI.Services.Inferfaces;
 
 namespace RentAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class BikeController : ControllerBase
     {
         private readonly IBikeService _bikeService;
@@ -21,6 +25,11 @@ namespace RentAPI.Controllers
             _bikeService = bikeService;
         }
 
+        // bike/
+        /// <summary>
+        /// Obtém todas as bikes cadastradas
+        /// </summary>
+        /// <returns>Uma lista de objeetos BikeDTO</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BikeDTO>>> Get()
         {
@@ -29,6 +38,12 @@ namespace RentAPI.Controllers
             return Ok(bikes);
         }
 
+        // bike/{id}
+        /// <summary>
+        /// Obtém uma bike específica pelo ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Um objeto BikeDTO</returns>
         [HttpGet("{id:Guid}", Name = "ObterBike")]
         public async Task<ActionResult<BikeDTO>> GetById(Guid id)
         {
@@ -37,6 +52,23 @@ namespace RentAPI.Controllers
             return Ok(bike);
         }
 
+        // bike/
+        /// <summary>
+        /// Inclui uma nova bike
+        /// </summary>
+        /// <remarks>
+        /// Exemplo de request:
+        ///     
+        ///     POST /bike
+        ///     {
+        ///         "name": "Nome da bike",
+        ///         "description": "Descrição da bike",
+        ///         "available": "Disponibilidade da bike",
+        ///         "typeBike": "Tipo da bike",
+        ///     }
+        /// </remarks>
+        /// <param name="bikeDto"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> Post(BikeDTO bikeDto)
         {
@@ -49,6 +81,13 @@ namespace RentAPI.Controllers
             return Ok("Bike registrada com sucesso!");
         }
 
+        // bike/{id}
+        /// <summary>
+        /// Atualiza uma bike
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="bikeDto"></param>
+        /// <returns>Retorna objeto BikeDTO atualizado</returns>
         [HttpPut("{id:Guid}")]
         public async Task<ActionResult> Put(Guid id, BikeDTO bikeDto)
         {
@@ -59,6 +98,12 @@ namespace RentAPI.Controllers
             return Ok(bikeDto);
         }
 
+        // bike/{id}
+        /// <summary>
+        /// Remove uma bike
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {
