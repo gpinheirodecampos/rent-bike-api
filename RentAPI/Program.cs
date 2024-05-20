@@ -96,7 +96,7 @@ builder.Services.AddAuthentication(
                     };
                 });
 
-// Registrando servico Unity Of Work
+// Registrando servico Unit Of Work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Registrando servico UserService
@@ -108,6 +108,7 @@ builder.Services.AddScoped<IImageService, ImageService>();
 // Registrando servico BikeService
 builder.Services.AddScoped<IBikeService, BikeService>();
 
+// Registrando servico auto mapper
 var mappingConfig = new MapperConfiguration(mc =>
 {
     mc.AddProfile(new MappingProfile());
@@ -115,6 +116,15 @@ var mappingConfig = new MapperConfiguration(mc =>
 
 IMapper mapper = mappingConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
+
+// Implementando CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+               builder => builder.AllowAnyOrigin()
+                                 .AllowAnyMethod()
+                                 .AllowAnyHeader());
+});
 
 var app = builder.Build();
 
@@ -130,6 +140,7 @@ app.ConfigureExceptionHandler();
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
