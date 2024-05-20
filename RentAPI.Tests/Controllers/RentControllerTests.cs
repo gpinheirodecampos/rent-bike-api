@@ -1,22 +1,9 @@
-﻿using AutoMapper;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RentAPI.Context;
 using RentAPI.Controllers;
 using RentAPI.DTOs;
-using RentAPI.DTOs.Mappings;
-using RentAPI.Models;
-using RentAPI.Repository;
-using RentAPI.Repository.Interfaces;
 using RentAPI.Services;
-using RentAPI.Services.Inferfaces;
-using RentAPI.Tests.Database;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RentAPI.Tests.Controllers
 {

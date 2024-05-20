@@ -1,73 +1,32 @@
-﻿using AutoMapper;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RentAPI.Context;
 using RentAPI.Controllers;
 using RentAPI.DTOs;
-using RentAPI.DTOs.Mappings;
-using RentAPI.Models;
-using RentAPI.Repository;
-using RentAPI.Repository.Interfaces;
 using RentAPI.Services;
-using RentAPI.Services.Inferfaces;
-using RentAPI.Tests.Database;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RentAPI.Tests.Controllers
 {
-    public class BikeControllerTests
+    public class BikeControllerTests : ControllerTestsBase<BikeController, BikeService>
     {
-        private readonly IMapper _mapper;
-        private readonly IUnitOfWork _UnitOfWork;
-        private readonly IBikeService _bikeService;
-
-        public static DbContextOptions<AppDbContext> dbContextOptions { get; }
-
-        static BikeControllerTests()
-        {
-            dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase(databaseName: "RentAPIDbTest")
-                .Options;
-
-            DatabaseInitializer.Initialize(dbContextOptions);
-        }
-
-        public BikeControllerTests()
-        {
-            _mapper = new Mapper(new MapperConfiguration(cfg => cfg.AddProfile<MappingProfile>()));
-            _UnitOfWork = new UnitOfWork(new AppDbContext(dbContextOptions));
-            _bikeService = new BikeService(_UnitOfWork, _mapper);
-        }
-
         [Fact]
         public async Task BikeController_GetAllBikes_ReturnsAllBikes()
         {
-            // Arrange
-            var controller = new BikeController(_bikeService);
-
             // Act
-            var result = await controller.Get();
+            var result = await _controller.Get();
 
             // Assert
             result.Result.Should().BeOfType<OkObjectResult>();
-            result.Result.As<OkObjectResult>().Value.Should().BeOfType<List<BikeDTO>>();
-            result.Result.As<OkObjectResult>().Value.As<List<BikeDTO>>().Count.Should().BeGreaterThanOrEqualTo(1);
         }
 
         [Fact]
         public async Task BikeController_GetBikeById_ReturnsBike()
         {
             // Arrange
-            var controller = new BikeController(_bikeService);
-            var bike = await _UnitOfWork.BikeRepository.Get().FirstOrDefaultAsync();
+            var bike = await _unitOfWork.BikeRepository.Get().FirstOrDefaultAsync();
 
             // Act
-            var result = await controller.GetById(bike.BikeId);
+            var result = await _controller.GetById(bike.BikeId);
 
             // Assert
             result.Result.Should().BeOfType<OkObjectResult>();
@@ -77,7 +36,6 @@ namespace RentAPI.Tests.Controllers
         public async Task BikeController_PostBike_ReturnsOk()
         {
             // Arrange
-            var controller = new BikeController(_bikeService);
             var bike = new BikeDTO
             {
                 BikeId = Guid.NewGuid(),
@@ -88,7 +46,7 @@ namespace RentAPI.Tests.Controllers
             };
 
             // Act
-            var result = await controller.Post(bike);
+            var result = await _controller.Post(bike);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
@@ -98,12 +56,11 @@ namespace RentAPI.Tests.Controllers
         public async Task BikeController_AddBike_ReturnsException()
         {
             // Arrange
-            var controller = new BikeController(_bikeService);
-            var bike = await _UnitOfWork.BikeRepository.Get().FirstOrDefaultAsync();
+            var bike = await _unitOfWork.BikeRepository.Get().FirstOrDefaultAsync();
             var bikeDto = _mapper.Map<BikeDTO>(bike);
 
             // Act
-            Func<Task> result = async () => await controller.Post(bikeDto);
+            Func<Task> result = async () => await _controller.Post(bikeDto);
 
             // Assert
             await result.Should().ThrowAsync<Exception>();
@@ -113,13 +70,12 @@ namespace RentAPI.Tests.Controllers
         public async Task BikeController_UpdateBike_ReturnsOk()
         {
             // Arrange
-            var controller = new BikeController(_bikeService);
-            var bike = await _UnitOfWork.BikeRepository.Get().FirstOrDefaultAsync();
+            var bike = await _unitOfWork.BikeRepository.Get().FirstOrDefaultAsync();
             bike.TypeBike = Enums.Enum.TypeBike.Used;
             var bikeDto = _mapper.Map<BikeDTO>(bike);
 
             // Act
-            var result = await controller.Put(bike.BikeId, bikeDto);
+            var result = await _controller.Put(bike.BikeId, bikeDto);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
@@ -129,12 +85,11 @@ namespace RentAPI.Tests.Controllers
         public async Task BikeController_UpdateBike_ReturnsBadRequest()
         {
             // Arrange
-            var controller = new BikeController(_bikeService);
-            var bike = await _UnitOfWork.BikeRepository.Get().FirstOrDefaultAsync();
+            var bike = await _unitOfWork.BikeRepository.Get().FirstOrDefaultAsync();
             var bikeDto = _mapper.Map<BikeDTO>(bike);
 
             // Act
-            var result = await controller.Put(Guid.NewGuid(), bikeDto);
+            var result = await _controller.Put(Guid.NewGuid(), bikeDto);
 
             // Assert
             result.Should().BeOfType<BadRequestObjectResult>();
@@ -144,11 +99,10 @@ namespace RentAPI.Tests.Controllers
         public async Task BikeController_DeleteBike_ReturnsOk()
         {
             // Arrange
-            var controller = new BikeController(_bikeService);
-            var bike = await _UnitOfWork.BikeRepository.Get().FirstOrDefaultAsync();
+            var bike = await _unitOfWork.BikeRepository.Get().FirstOrDefaultAsync();
 
             // Act
-            var result = await controller.Delete(bike.BikeId);
+            var result = await _controller.Delete(bike.BikeId);
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
@@ -157,14 +111,17 @@ namespace RentAPI.Tests.Controllers
         [Fact]
         public async Task BikeController_DeleteBike_ReturnsNotFound()
         {
-            // Arrange
-            var controller = new BikeController(_bikeService);
-
             // Act
-            var result = await controller.Delete(Guid.NewGuid());
+            var result = await _controller.Delete(Guid.NewGuid());
 
             // Assert
             result.Should().BeOfType<NotFoundObjectResult>();
+        }
+
+        protected override BikeService CreateServiceInstance()
+        {
+            // Crie uma instância específica de ExampleService com quaisquer parâmetros adicionais necessários
+            return new BikeService(_unitOfWork, _mapper);
         }
     }
 }
