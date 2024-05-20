@@ -124,7 +124,6 @@ namespace RentAPI.Tests.Controllers
 
         protected override ImageService CreateServiceInstance()
         {
-            // Crie uma instância específica de ExampleService com quaisquer parâmetros adicionais necessários
             return new ImageService(_unitOfWork, _mapper);
         }
     }

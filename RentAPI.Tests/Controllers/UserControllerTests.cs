@@ -128,7 +128,6 @@ namespace RentAPI.Tests.Controllers
 
         protected override UserService CreateServiceInstance()
         {
-            // Crie uma instância específica de ExampleService com quaisquer parâmetros adicionais necessários
             return new UserService(_unitOfWork, _mapper);
         }
     }

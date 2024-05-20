@@ -120,7 +120,6 @@ namespace RentAPI.Tests.Controllers
 
         protected override BikeService CreateServiceInstance()
         {
-            // Crie uma instância específica de ExampleService com quaisquer parâmetros adicionais necessários
             return new BikeService(_unitOfWork, _mapper);
         }
     }
