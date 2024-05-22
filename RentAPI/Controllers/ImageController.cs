@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,83 +8,109 @@ using RentAPI.Context;
 using RentAPI.DTOs;
 using RentAPI.Models;
 using RentAPI.Repository.Interfaces;
+using RentAPI.Services.Inferfaces;
 
 namespace RentAPI.Controllers
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]
     [ApiController]
+    [Produces("application/json")]
     public class ImageController : ControllerBase
     {
-        private readonly IUnityOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+        private readonly IImageService _imageService;
 
-        public ImageController(IUnityOfWork context, IMapper mapper)
+        public ImageController(IImageService imageService)
         {
-            _unitOfWork = context;
-            _mapper = mapper;
+            _imageService = imageService;
         }
 
+        // image/
+        /// <summary>
+        /// Obtém uma lista de imagens cadastradas.
+        /// </summary>
+        /// <returns>Uma lista de objetos ImageDTO</returns>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ImageDTO>>> GetAsync()
+        public async Task<ActionResult<IEnumerable<ImageDTO>>> Get()
         {
-            var images = await _unitOfWork.ImageRepository.Get().ToListAsync();
+            var images = await _imageService.Get();
 
-            var imagesDto = _mapper.Map<List<ImageDTO>>(images);
+            if (images.Count() == 0) { return NotFound("Nenhuma imagem encontrada."); }
 
-            if (imagesDto is null) { return NotFound("Nao ha imagens cadastradas."); }
-
-            return imagesDto;
+            return Ok(images);
         }
 
+        // image/{id}
+        /// <summary>
+        /// Obtém uma imagem específica por Id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Um objeto ImageDTO</returns>
         [HttpGet("{id:int}", Name = "ObterImage")]
-        public async Task<ActionResult<ImageDTO>> GetAsync(Guid id)
+        public async Task<ActionResult<ImageDTO>> GetById(Guid id)
         {
-            var image = await _unitOfWork.ImageRepository.GetByIdAsync(i => i.ImageId == id);
+            var image = await _imageService.GetById(id);
 
-            var imageDto = _mapper.Map<ImageDTO>(image);
-
-            if (imageDto is null) { return NotFound("Imagem nao encontrada."); }
-
-            return imageDto;
+            return Ok(image);
         }
 
+        // image/
+        /// <summary>
+        /// Inclui uma nova imagem.
+        /// </summary>
+        /// <remarks>
+        /// Exemplo de request:
+        ///     
+        ///     POST /image
+        ///     {
+        ///         "url": "Url da imagem",
+        ///         "bikeId": "Id da bicicleta"
+        ///     }
+        /// </remarks>
+        /// <param name="imageDto"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult> Post(ImageDTO imageDto)
         {
-            if (imageDto is null) { return BadRequest(); }
+            if (imageDto is null) { return BadRequest("O corpo da requisição não pode ser nulo."); }
 
-            var image = _mapper.Map<Image>(imageDto);
-
-            _unitOfWork.ImageRepository.Add(image);
-            await _unitOfWork.Commit();
+            await _imageService.Add(imageDto);
 
             return Ok("Imagem registrada com sucesso!");
         }
 
+        // image/{id}
+        /// <summary>
+        /// Atualiza uma imagem.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="imageDto"></param>
+        /// <returns>Um objeto ImageDTO atualizado</returns>
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(Guid id, ImageDTO imageDto)
         {
-            if (id != imageDto.BikeId) { return BadRequest(); }
+            if (id != imageDto.ImageId) { return BadRequest("O ID digitado no body não confere com o o ID fornecido na rota."); }
 
-            var image = _mapper.Map<Image>(imageDto);
-
-            _unitOfWork.ImageRepository.Update(image);
-            await _unitOfWork.Commit();
+            await _imageService.Update(imageDto);
 
             return Ok(imageDto);
         }
 
+        // image/{id}
+        /// <summary>
+        /// Remove uma imagem.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(Guid id)
         {
-            var image = await _unitOfWork.ImageRepository.GetByIdAsync(i => i.ImageId == id);
+            var image = await _imageService.GetById(id);
+            if (image is null) { return NotFound("Não foi encontrado uma imagem para o ID fornecido."); }
 
-            if (image is null) { return NotFound("Image nao encontrada."); }
+            await _imageService.Delete(id);
 
-            _unitOfWork.ImageRepository.Delete(image);
-            await _unitOfWork.Commit();
-
-            return Ok();
+            return Ok("Imagem removida com sucesso!");
         }
     }
 }

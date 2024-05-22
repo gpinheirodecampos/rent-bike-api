@@ -1,6 +1,6 @@
 ﻿namespace RentAPI.Repository.Interfaces
 {
-    public interface IUnityOfWork
+    public interface IUnitOfWork
     {
         IRentRepository RentRepository { get; }
 

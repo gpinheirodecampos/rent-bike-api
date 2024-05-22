@@ -3,7 +3,7 @@ using RentAPI.Repository.Interfaces;
 
 namespace RentAPI.Repository
 {
-    public class UnitOfWork : IUnityOfWork
+    public class UnitOfWork : IUnitOfWork
     {
         private RentRepository _rentRepo;
 

@@ -11,57 +11,66 @@ namespace RentAPI.Services
     public class UserService : IUserService
     {
         private readonly IMapper _mapper;
-        private readonly IUnityOfWork _unityOfWork;
+        private readonly IUnitOfWork _UnitOfWork;
 
-        public UserService(IUnityOfWork unityOfWork, IMapper mapper)
+        public UserService(IUnitOfWork UnitOfWork, IMapper mapper)
         {
-            _unityOfWork = unityOfWork;
+            _UnitOfWork = UnitOfWork;
             _mapper = mapper;
         }
 
         public async Task<IEnumerable<UserDTO>> Get()
         {
-            var users = await _unityOfWork.UserRepository.Get(x => x.Rent).ToListAsync();
+            var users = await _UnitOfWork.UserRepository.Get(x => x.Rent).ToListAsync();
 
             return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
-        public async Task<UserDTO> GetByIdAsync(Guid id)
+        public async Task<UserDTO> GetById(Guid id)
         {
-            var user = await _unityOfWork.UserRepository.GetByIdAsync(x => x.UserId == id, x => x.Rent);
+            var user = await _UnitOfWork.UserRepository.GetByProperty(x => x.UserId == id, x => x.Rent);
+
             return _mapper.Map<UserDTO>(user);
         }
 
-        public async Task<UserDTO> GetByEmailAsync(string email)
+        public async Task<UserDTO> GetByEmail(string email)
         {
-            var user = await _unityOfWork.UserRepository.GetUserByEmail(x => x.UserEmail == email);
+            var user = await _UnitOfWork.UserRepository.GetByProperty(x => x.UserEmail == email, x => x.Rent);
+
             return _mapper.Map<UserDTO>(user);
         }
 
-        public async Task<UserDTO> AddAsync(UserDTO userDto)
+        public async Task<UserDTO> Add(UserDTO userDto)
         {
-            var userExists = await _unityOfWork.UserRepository.GetUserByEmail(x => x.UserEmail == userDto.UserEmail);
+            var userExists = await _UnitOfWork.UserRepository.GetByProperty(x => x.UserEmail == userDto.UserEmail);
+
             if (userExists != null) { throw new Exception("Usuário já cadastrado."); }
 
             var user = _mapper.Map<User>(userDto);
-            _unityOfWork.UserRepository.Add(user);
-            await _unityOfWork.Commit();
+
+            _UnitOfWork.UserRepository.Add(user);
+
+            await _UnitOfWork.Commit();
 
             return userDto;
         }
 
-        public async Task UpdateAsync(UserDTO userDto)
+        public async Task Update(UserDTO userDto)
         {
             var user = _mapper.Map<User>(userDto);
-            _unityOfWork.UserRepository.Update(user);
-            await _unityOfWork.Commit();
+
+            _UnitOfWork.UserRepository.Update(user);
+
+            await _UnitOfWork.Commit();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task Delete(Guid id)
         {
-            var user = await _unityOfWork.UserRepository.GetByIdAsync(x => x.UserId == id);
-            _unityOfWork.UserRepository.Delete(user);
-            await _unityOfWork.Commit();
+            var user = await _UnitOfWork.UserRepository.GetByProperty(x => x.UserId == id);
+
+            _UnitOfWork.UserRepository.Delete(user);
+
+            await _UnitOfWork.Commit();
         }
     }
 }

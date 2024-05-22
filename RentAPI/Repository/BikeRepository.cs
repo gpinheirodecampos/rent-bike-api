@@ -12,11 +12,6 @@ namespace RentAPI.Repository
         { 
         }
 
-        public IQueryable<Bike> GetBikesImages()
-        {
-            return Get().Include(x => x.Images);
-        }
-
         public IEnumerable<Bike> GetBikeByAvailability()
         {
             return Get().Where(b => b.Available).ToList();
@@ -24,7 +19,7 @@ namespace RentAPI.Repository
 
         public async Task UpdateBikeAvailability(Guid id)
         {
-            var bike = await GetByIdAsync(b => b.BikeId == id);
+            var bike = await GetByProperty(b => b.BikeId == id);
 
             bike.Available = false;
 
