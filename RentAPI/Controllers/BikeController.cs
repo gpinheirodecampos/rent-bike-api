@@ -35,6 +35,8 @@ namespace RentAPI.Controllers
         {
             var bikes = await _bikeService.Get();
 
+            if (bikes.Count() == 0) { return NotFound("Não há bikes cadastradas."); }
+
             return Ok(bikes);
         }
 
@@ -63,8 +65,8 @@ namespace RentAPI.Controllers
         ///     {
         ///         "name": "Nome da bike",
         ///         "description": "Descrição da bike",
-        ///         "available": "Disponibilidade da bike",
-        ///         "typeBike": "Tipo da bike",
+        ///         "available": 1 para Disponível, 0 para Indisponível,
+        ///         "typeBike": 1 para Nova, 0 para Usada
         ///     }
         /// </remarks>
         /// <param name="bikeDto"></param>

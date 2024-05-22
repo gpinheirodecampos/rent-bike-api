@@ -48,7 +48,7 @@ namespace RentAPI.Controllers
             return Ok(rent);
         }
 
-        [HttpGet("user/{email:string}", Name = "ObterRentPorEmailDoUsuario")]
+        [HttpGet("user/{email}", Name = "ObterRentPorEmailDoUsuario")]
         public async Task<ActionResult<RentDTO>> GetByUserEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email)) { return BadRequest("Email não informado."); }
@@ -82,7 +82,7 @@ namespace RentAPI.Controllers
             return Ok("Rent registrado com sucesso!");
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:Guid}")]
         public async Task<ActionResult> Put(Guid id, RentDTO rentDto)
         {
             if (id != rentDto.RentId) { return BadRequest("Id da rent não corresponde ao Id da requisição."); }
@@ -92,7 +92,7 @@ namespace RentAPI.Controllers
             return Ok(rentDto);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id:Guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {
             var rent = await _rentService.GetById(id);
