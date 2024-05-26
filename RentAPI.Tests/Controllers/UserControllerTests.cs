@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RentAPI.Controllers;
-using RentAPI.DTOs;
-using RentAPI.Services;
+using Rents.Api.Controllers;
+using Rents.Application.DTOs;
+using Rents.Application.Services;
 
 namespace RentAPI.Tests.Controllers
 {

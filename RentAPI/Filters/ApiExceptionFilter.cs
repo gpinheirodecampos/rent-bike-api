@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace RentAPI.Filters
+namespace Rents.Api.Filters
 {
     public class ApiExceptionFilter : IExceptionFilter
     {

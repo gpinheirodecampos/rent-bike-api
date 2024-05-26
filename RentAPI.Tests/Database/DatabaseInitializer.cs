@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RentAPI.Context;
-using RentAPI.Models;
+using Rents.Infrastructure.Context;
+using Rents.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

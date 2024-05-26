@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RentAPI.Context;
-using RentAPI.DTOs;
-using RentAPI.Filters;
-using RentAPI.Models;
-using RentAPI.Repository;
-using RentAPI.Services.Inferfaces;
+using Rents.Infrastructure.Context;
+using Rents.Application.DTOs;
+using Rents.Api.Filters;
+using Rents.Domain.Entities;
+using Rents.Infrastructure.Repository;
+using Rents.Application.Services.Inferfaces;
 
-namespace RentAPI.Controllers
+namespace Rents.Api.Controllers
 {
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [Route("[controller]")]

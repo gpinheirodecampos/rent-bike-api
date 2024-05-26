@@ -3,9 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RentAPI", "RentAPI\RentAPI.csproj", "{8CCA5158-F01A-4559-BD96-61030B443BE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rents.Api", "RentAPI\Rents.Api.csproj", "{8CCA5158-F01A-4559-BD96-61030B443BE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RentAPI.Tests", "RentAPI.Tests\RentAPI.Tests.csproj", "{6279987A-1FF3-4020-BF44-67CDF8D972AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rents.Tests", "RentAPI.Tests\Rents.Tests.csproj", "{6279987A-1FF3-4020-BF44-67CDF8D972AA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rents.Domain", "RentAPI.Domain\Rents.Domain.csproj", "{1FA88FF9-808B-47DC-8498-4B93B7582DA9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rents.Infrastructure", "Rent.Infrastructure\Rents.Infrastructure.csproj", "{9F847E41-759B-4AD1-AEA2-10503AB8EE2A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rents.Application", "Rent.Application\Rents.Application.csproj", "{66186891-D6E2-4BF7-92FB-518D9F7E4F3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rents.CrossCutting", "Rent.CrossCutting\Rents.CrossCutting.csproj", "{D10BB1DA-430A-402E-9860-E534A7AFFB24}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +29,22 @@ Global
 		{6279987A-1FF3-4020-BF44-67CDF8D972AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6279987A-1FF3-4020-BF44-67CDF8D972AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6279987A-1FF3-4020-BF44-67CDF8D972AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FA88FF9-808B-47DC-8498-4B93B7582DA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FA88FF9-808B-47DC-8498-4B93B7582DA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FA88FF9-808B-47DC-8498-4B93B7582DA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FA88FF9-808B-47DC-8498-4B93B7582DA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F847E41-759B-4AD1-AEA2-10503AB8EE2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F847E41-759B-4AD1-AEA2-10503AB8EE2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F847E41-759B-4AD1-AEA2-10503AB8EE2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F847E41-759B-4AD1-AEA2-10503AB8EE2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{66186891-D6E2-4BF7-92FB-518D9F7E4F3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66186891-D6E2-4BF7-92FB-518D9F7E4F3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66186891-D6E2-4BF7-92FB-518D9F7E4F3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66186891-D6E2-4BF7-92FB-518D9F7E4F3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D10BB1DA-430A-402E-9860-E534A7AFFB24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D10BB1DA-430A-402E-9860-E534A7AFFB24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D10BB1DA-430A-402E-9860-E534A7AFFB24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D10BB1DA-430A-402E-9860-E534A7AFFB24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

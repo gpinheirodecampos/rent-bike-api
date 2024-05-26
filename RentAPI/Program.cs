@@ -1,18 +1,12 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using RentAPI.Context;
-using RentAPI.DTOs.Mappings;
-using RentAPI.Extensions;
-using RentAPI.Filters;
-using RentAPI.Repository;
-using RentAPI.Repository.Interfaces;
-using RentAPI.Services;
-using RentAPI.Services.Inferfaces;
+using Rents.CrossCutting.IoC;
+using Rents.Api.Extensions;
+using Rents.Api.Filters;
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
+using Rents.Infrastructure.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +21,13 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 })
 .AddNewtonsoftJson();
-            
+
+builder.Services.AddInfrastructureAPI(builder.Configuration);
+
+// Registrando servico Identity
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -60,20 +60,6 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-builder.Services.AddScoped<ApiLoggingFilter>();
-
-// Adicionando string de conexao
-string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
-
-// Registrando servico DbContext
-builder.Services.AddDbContext<AppDbContext>(options =>
-                    options.UseMySql(mySqlConnection,
-                    ServerVersion.AutoDetect(mySqlConnection)));
-
-// Registrando servico Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
 
 // Implementando Token JWT
 var secret = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:key"]);
@@ -96,27 +82,6 @@ builder.Services.AddAuthentication(
                     };
                 });
 
-// Registrando servico Unit Of Work
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-// Registrando servico UserService
-builder.Services.AddScoped<IUserService, UserService>();
-
-// Registrando servico ImageService
-builder.Services.AddScoped<IImageService, ImageService>();
-
-// Registrando servico BikeService
-builder.Services.AddScoped<IBikeService, BikeService>();
-
-// Registrando servico auto mapper
-var mappingConfig = new MapperConfiguration(mc =>
-{
-    mc.AddProfile(new MappingProfile());
-});
-
-IMapper mapper = mappingConfig.CreateMapper();
-builder.Services.AddSingleton(mapper);
-
 // Implementando CORS
 builder.Services.AddCors(options =>
 {
@@ -125,6 +90,8 @@ builder.Services.AddCors(options =>
                                  .AllowAnyMethod()
                                  .AllowAnyHeader());
 });
+
+builder.Services.AddScoped<ApiLoggingFilter>();
 
 var app = builder.Build();
 

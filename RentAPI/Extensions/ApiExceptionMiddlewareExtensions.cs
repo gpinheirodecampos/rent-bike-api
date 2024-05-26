@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using RentAPI.Models;
+using Rents.Domain.Entities;
 using System.Net;
 
-namespace RentAPI.Extensions
+namespace Rents.Api.Extensions
 {
     public static class ApiExceptionMiddlewareExtensions
     {

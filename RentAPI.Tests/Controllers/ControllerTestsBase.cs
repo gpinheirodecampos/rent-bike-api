@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using RentAPI.Context;
-using RentAPI.Repository.Interfaces;
-using RentAPI.Repository;
+using Rents.Infrastructure.Context;
+using Rents.Infrastructure.Repository.Interfaces;
+using Rents.Infrastructure.Repository;
 using RentAPI.Tests.Database;
-using RentAPI.DTOs.Mappings;
+using Rents.Application.DTOs.Mappings;
 
 public class ControllerTestsBase<TController, TService> : IDisposable
     where TController : class

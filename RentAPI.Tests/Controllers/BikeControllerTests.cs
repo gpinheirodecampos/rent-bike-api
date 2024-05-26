@@ -1,9 +1,10 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RentAPI.Controllers;
-using RentAPI.DTOs;
-using RentAPI.Services;
+using Rents.Api.Controllers;
+using Rents.Application.Services;
+using Rents.Application.DTOs;
+using static Rents.Domain.Enums.Enum;
 
 namespace RentAPI.Tests.Controllers
 {
@@ -42,7 +43,7 @@ namespace RentAPI.Tests.Controllers
                 Available = true,
                 Description = "Description",
                 Name = "Name",
-                TypeBike = Enums.Enum.TypeBike.New
+                TypeBike = TypeBike.New
             };
 
             // Act
@@ -71,7 +72,7 @@ namespace RentAPI.Tests.Controllers
         {
             // Arrange
             var bike = await _unitOfWork.BikeRepository.Get().FirstOrDefaultAsync();
-            bike.TypeBike = Enums.Enum.TypeBike.Used;
+            bike.TypeBike = TypeBike.Used;
             var bikeDto = _mapper.Map<BikeDTO>(bike);
 
             // Act
