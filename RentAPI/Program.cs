@@ -95,12 +95,8 @@ builder.Services.AddScoped<ApiLoggingFilter>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // Adicionando middleware de tratamento de erros
 app.ConfigureExceptionHandler();
